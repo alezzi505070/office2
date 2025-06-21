@@ -5526,3 +5526,338 @@ NameError: name 'sys' is not defined
 2025-06-18 17:52:18,772 - INFO - Logout button added to header placeholder.
 2025-06-18 17:52:18,774 - INFO - Attempting to re-select tab using new label: 'Upload Files' (from key: 'tab_upload_files')
 2025-06-18 17:52:18,774 - INFO - Scheduled selection of tab: 'Upload Files'
+2025-06-21 17:56:21,723 - INFO - --- Logging initialized (Live Writing). Log file at: c:\Users\lenovo\Downloads\office2-feature-on-demand-translations\office2-feature-on-demand-translations\office-add-code-explanation-file (3)\office-add-code-explanation-file\new - Copy\archive_app.log ---
+2025-06-21 17:56:21,723 - CRITICAL - CRITICAL_LOG: Logging configured at DEBUG level.
+2025-06-21 17:56:21,767 - INFO - Application language changed to: en.
+2025-06-21 17:56:21,767 - CRITICAL - CRITICAL_LOG: FileArchiveApp __init__ started.
+2025-06-21 17:56:21,767 - INFO - Initializing user database at: c:\Users\lenovo\Downloads\office2-feature-on-demand-translations\office2-feature-on-demand-translations\office-add-code-explanation-file (3)\office-add-code-explanation-file\new - Copy\users.db
+2025-06-21 17:56:21,771 - INFO - Loaded 1 users from database.
+2025-06-21 17:56:21,771 - INFO - ThreadPoolExecutor created with max_workers=4
+2025-06-21 17:56:22,363 - INFO - TkinterDnD root created, main app is CTkToplevel.
+2025-06-21 17:56:22,363 - WARNING - Translation missing for key='app_title' in 'en' and also in en fallback.
+2025-06-21 17:56:22,452 - INFO - Archive folder secured: archives
+2025-06-21 17:56:22,452 - INFO - File monitoring started
+2025-06-21 17:56:22,452 - INFO - FileArchiveApp __init__ completed.
+2025-06-21 17:56:31,820 - INFO - Admin 'admin' logged in.
+2025-06-21 17:56:32,223 - INFO - Registering drop target for widget: .!ctktoplevel.!ctkframe.!ctktabview.!ctkframe.!ctkframe.!canvas.!ctkscrollableframe.!ctkframe4.!ctkcanvas
+2025-06-21 17:56:32,223 - INFO - Drop target registered.
+2025-06-21 17:56:32,223 - INFO - Drag & Drop events bound successfully.
+2025-06-21 17:56:32,793 - INFO - Archive folder shown: archives
+2025-06-21 17:56:32,978 - INFO - Logout button added to header placeholder.
+2025-06-21 17:56:39,757 - INFO - Attempting to switch language from 'en' to 'ar'
+2025-06-21 17:56:39,757 - INFO - Identified active tab key: 'tab_upload_files' for displayed name 'Upload Files'
+2025-06-21 17:56:39,757 - INFO - Language 'ar' not loaded. Attempting to load.
+2025-06-21 17:56:39,757 - INFO - Translations for 'ar' loaded successfully from c:\Users\lenovo\Downloads\office2-feature-on-demand-translations\office2-feature-on-demand-translations\office-add-code-explanation-file (3)\office-add-code-explanation-file\new - Copy\ar.json.
+2025-06-21 17:56:39,757 - INFO - Application language changed to: ar.
+2025-06-21 17:56:39,757 - INFO - Rebuilding UI for language: ar. Selected key: tab_upload_files
+2025-06-21 17:56:39,872 - WARNING - Translation missing for key 'label_user' in 'ar'. Falling back to en.
+2025-06-21 17:56:39,872 - WARNING - Translation missing for key='label_user' in 'ar' and also in en fallback.
+2025-06-21 17:56:39,872 - WARNING - Translation missing for key 'role_admin' in 'ar'. Falling back to en.
+2025-06-21 17:56:39,872 - WARNING - Translation missing for key='role_admin' in 'ar' and also in en fallback.
+2025-06-21 17:56:39,908 - INFO - Setting up tab content after language switch...
+2025-06-21 17:56:40,161 - INFO - Registering drop target for widget: .!ctktoplevel.!ctkframe.!ctktabview2.!ctkframe.!ctkframe.!canvas.!ctkscrollableframe.!ctkframe4.!ctkcanvas
+2025-06-21 17:56:40,161 - INFO - Drop target registered.
+2025-06-21 17:56:40,161 - INFO - Drag & Drop events bound successfully.
+2025-06-21 17:56:40,675 - INFO - Logout button added to header placeholder.
+2025-06-21 17:56:40,675 - INFO - Attempting to re-select tab using new label: '—›⁄ «·„·›« ' (from key: 'tab_upload_files')
+2025-06-21 17:56:40,675 - INFO - Scheduled selection of tab: '—›⁄ «·„·›« '
+2025-06-21 17:56:53,849 - INFO - Attempting to switch language from 'ar' to 'en'
+2025-06-21 17:56:53,849 - INFO - Identified active tab key: 'tab_upload_files' for displayed name '—›⁄ «·„·›« '
+2025-06-21 17:56:53,849 - INFO - Application language changed to: en.
+2025-06-21 17:56:53,849 - INFO - Rebuilding UI for language: en. Selected key: tab_upload_files
+2025-06-21 17:56:53,973 - WARNING - Translation missing for key='label_user' in 'en' and also in en fallback.
+2025-06-21 17:56:53,973 - WARNING - Translation missing for key='role_admin' in 'en' and also in en fallback.
+2025-06-21 17:56:53,991 - INFO - Setting up tab content after language switch...
+2025-06-21 17:56:54,228 - INFO - Registering drop target for widget: .!ctktoplevel.!ctkframe.!ctktabview3.!ctkframe.!ctkframe.!canvas.!ctkscrollableframe.!ctkframe4.!ctkcanvas
+2025-06-21 17:56:54,228 - INFO - Drop target registered.
+2025-06-21 17:56:54,228 - INFO - Drag & Drop events bound successfully.
+2025-06-21 17:56:54,622 - INFO - Logout button added to header placeholder.
+2025-06-21 17:56:54,622 - INFO - Attempting to re-select tab using new label: 'Upload Files' (from key: 'tab_upload_files')
+2025-06-21 17:56:54,622 - INFO - Scheduled selection of tab: 'Upload Files'
+2025-06-21 17:56:55,450 - INFO - Attempting to switch language from 'en' to 'ar'
+2025-06-21 17:56:55,450 - INFO - Identified active tab key: 'tab_upload_files' for displayed name 'Upload Files'
+2025-06-21 17:56:55,466 - INFO - Application language changed to: ar.
+2025-06-21 17:56:55,466 - INFO - Rebuilding UI for language: ar. Selected key: tab_upload_files
+2025-06-21 17:56:55,604 - WARNING - Translation missing for key 'label_user' in 'ar'. Falling back to en.
+2025-06-21 17:56:55,604 - WARNING - Translation missing for key='label_user' in 'ar' and also in en fallback.
+2025-06-21 17:56:55,604 - WARNING - Translation missing for key 'role_admin' in 'ar'. Falling back to en.
+2025-06-21 17:56:55,604 - WARNING - Translation missing for key='role_admin' in 'ar' and also in en fallback.
+2025-06-21 17:56:55,606 - INFO - Setting up tab content after language switch...
+2025-06-21 17:56:55,864 - INFO - Registering drop target for widget: .!ctktoplevel.!ctkframe.!ctktabview4.!ctkframe.!ctkframe.!canvas.!ctkscrollableframe.!ctkframe4.!ctkcanvas
+2025-06-21 17:56:55,864 - INFO - Drop target registered.
+2025-06-21 17:56:55,864 - INFO - Drag & Drop events bound successfully.
+2025-06-21 17:56:56,268 - INFO - Logout button added to header placeholder.
+2025-06-21 17:56:56,268 - INFO - Attempting to re-select tab using new label: '—›⁄ «·„·›« ' (from key: 'tab_upload_files')
+2025-06-21 17:56:56,268 - INFO - Scheduled selection of tab: '—›⁄ «·„·›« '
+2025-06-21 18:04:12,877 - INFO - Creating/Verifying structure for company: ﬁﬁﬁ»ﬁ (Safe Path: ﬁﬁﬁ»ﬁ)
+2025-06-21 18:04:12,899 - INFO - Structure verification complete for: ﬁﬁﬁ»ﬁ
+2025-06-21 18:04:12,899 - INFO - Updating Subheader options for Company 'ﬁﬁﬁ»ﬁ', Header 'Working Papers File'. Found: ['A', 'B1', 'B2', 'B3', 'I1', 'I2']
+2025-06-21 18:04:12,901 - INFO - Updating Section options for Company 'ﬁﬁﬁ»ﬁ', Path 'Working Papers File/A'. Found: ['1', '10', '11', '12', '13', '14', '15', '2', '3', '4', '5', '6', '7', '8', '9']
+2025-06-21 18:04:12,902 - INFO - Updating Subsection options for Company 'ﬁﬁﬁ»ﬁ', Path 'Working Papers File/A/1'. Found: []
+2025-06-21 18:04:12,965 - ERROR - Error in UI callback: invalid command name ".!ctktoplevel.!ctkframe.!ctkframe2.!ctklabel.!label"
+2025-06-21 18:04:14,675 - INFO - Updating Subheader options for Company 'ﬁﬁﬁ»ﬁ', Header 'Permanent Audit File'. Found: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6']
+2025-06-21 18:04:14,676 - INFO - Updating Section options for Company 'ﬁﬁﬁ»ﬁ', Path 'Permanent Audit File/c1'. Found: []
+2025-06-21 18:04:26,398 - INFO - Hiding archive folder (non-recursive) STARTED: C:\Users\lenovo\Downloads\office2-feature-on-demand-translations\office2-feature-on-demand-translations\office-add-code-explanation-file (3)\office-add-code-explanation-file\new - Copy\archives
+2025-06-21 18:04:26,398 - INFO - Before Windows attrib command
+2025-06-21 18:04:26,436 - INFO - After Windows attrib command
+2025-06-21 18:04:26,436 - INFO - Archive folder hidden successfully (non-recursive) ENDED
+2025-06-21 18:04:26,436 - INFO - hide_archive_folder() execution time: 0.0385 seconds
+2025-06-21 18:04:26,437 - INFO - Archive folder hidden on logout
+2025-06-21 18:04:26,437 - INFO - User 'admin' logged out
+2025-06-21 18:04:26,454 - INFO - Updating Subheader options for Company 'ﬁﬁﬁ»ﬁ', Header 'Permanent Audit File'. Found: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6']
+2025-06-21 18:04:26,456 - INFO - Updating Subheader options for Company 'ﬁﬁﬁ»ﬁ', Header 'Permanent Audit File'. Found: ['c1', 'c2', 'c3', 'c4', 'c5', 'c6']
+2025-06-21 18:06:20,620 - INFO - --- Logging initialized (Live Writing). Log file at: c:\Users\lenovo\Downloads\office2-feature-on-demand-translations\office2-feature-on-demand-translations\office-add-code-explanation-file (3)\office-add-code-explanation-file\new - Copy\archive_app.log ---
+2025-06-21 18:06:20,620 - CRITICAL - CRITICAL_LOG: Logging configured at DEBUG level.
+2025-06-21 18:06:20,656 - INFO - Application language changed to: en.
+2025-06-21 18:06:20,656 - CRITICAL - CRITICAL_LOG: FileArchiveApp __init__ started.
+2025-06-21 18:06:20,662 - INFO - Initializing user database at: c:\Users\lenovo\Downloads\office2-feature-on-demand-translations\office2-feature-on-demand-translations\office-add-code-explanation-file (3)\office-add-code-explanation-file\new - Copy\users.db
+2025-06-21 18:06:20,663 - INFO - Loaded 1 users from database.
+2025-06-21 18:06:20,663 - INFO - ThreadPoolExecutor created with max_workers=4
+2025-06-21 18:06:20,802 - INFO - TkinterDnD root created, main app is CTkToplevel.
+2025-06-21 18:06:20,804 - WARNING - Translation missing for key='app_title' in 'en' and also in en fallback.
+2025-06-21 18:06:20,885 - INFO - Archive folder secured: archives
+2025-06-21 18:06:20,885 - INFO - File monitoring started
+2025-06-21 18:06:20,885 - INFO - FileArchiveApp __init__ completed.
+2025-06-21 18:06:28,641 - WARNING - Failed login attempt.
+2025-06-21 18:06:39,491 - INFO - Admin 'admin' logged in.
+2025-06-21 18:06:39,859 - INFO - Registering drop target for widget: .!ctktoplevel.!ctkframe.!ctktabview.!ctkframe.!ctkframe.!canvas.!ctkscrollableframe.!ctkframe4.!ctkcanvas
+2025-06-21 18:06:39,868 - INFO - Drop target registered.
+2025-06-21 18:06:39,868 - INFO - Drag & Drop events bound successfully.
+2025-06-21 18:06:40,391 - INFO - Archive folder shown: archives
+2025-06-21 18:06:40,578 - INFO - Logout button added to header placeholder.
+2025-06-21 18:07:05,200 - INFO - User 'ana' saved to database.
+2025-06-21 18:07:06,760 - INFO - Admin 'admin' added new user 'ana' with role 'user'
+2025-06-21 18:07:09,211 - INFO - Hiding archive folder (non-recursive) STARTED: C:\Users\lenovo\Downloads\office2-feature-on-demand-translations\office2-feature-on-demand-translations\office-add-code-explanation-file (3)\office-add-code-explanation-file\new - Copy\archives
+2025-06-21 18:07:09,211 - INFO - Before Windows attrib command
+2025-06-21 18:07:09,247 - INFO - After Windows attrib command
+2025-06-21 18:07:09,247 - INFO - Archive folder hidden successfully (non-recursive) ENDED
+2025-06-21 18:07:09,247 - INFO - hide_archive_folder() execution time: 0.0359 seconds
+2025-06-21 18:07:09,247 - INFO - Archive folder hidden on logout
+2025-06-21 18:07:09,249 - INFO - User 'admin' logged out
+2025-06-21 18:07:14,298 - INFO - User 'ana' logged in.
+2025-06-21 18:07:14,525 - INFO - Registering drop target for widget: .!ctktoplevel.!ctkframe.!ctktabview.!ctkframe.!ctkframe2.!canvas.!ctkscrollableframe.!ctkframe4.!ctkcanvas
+2025-06-21 18:07:14,527 - INFO - Drop target registered.
+2025-06-21 18:07:14,527 - INFO - Drag & Drop events bound successfully.
+2025-06-21 18:07:14,668 - INFO - Hiding archive folder (non-recursive) STARTED: C:\Users\lenovo\Downloads\office2-feature-on-demand-translations\office2-feature-on-demand-translations\office-add-code-explanation-file (3)\office-add-code-explanation-file\new - Copy\archives
+2025-06-21 18:07:14,668 - INFO - Before Windows attrib command
+2025-06-21 18:07:14,698 - INFO - After Windows attrib command
+2025-06-21 18:07:14,698 - INFO - Archive folder hidden successfully (non-recursive) ENDED
+2025-06-21 18:07:14,699 - INFO - hide_archive_folder() execution time: 0.0306 seconds
+2025-06-21 18:07:14,699 - INFO - Logout button added to header placeholder.
+2025-06-21 18:07:30,465 - INFO - User 'ana' logged out
+2025-06-21 18:07:30,465 - INFO - Application closing
+2025-06-21 18:07:35,912 - INFO - --- Logging initialized (Live Writing). Log file at: c:\Users\lenovo\Downloads\office2-feature-on-demand-translations\office2-feature-on-demand-translations\office-add-code-explanation-file (3)\office-add-code-explanation-file\new - Copy\archive_app.log ---
+2025-06-21 18:07:35,912 - CRITICAL - CRITICAL_LOG: Logging configured at DEBUG level.
+2025-06-21 18:07:35,956 - INFO - Application language changed to: en.
+2025-06-21 18:07:35,956 - CRITICAL - CRITICAL_LOG: FileArchiveApp __init__ started.
+2025-06-21 18:07:35,956 - INFO - Initializing user database at: c:\Users\lenovo\Downloads\office2-feature-on-demand-translations\office2-feature-on-demand-translations\office-add-code-explanation-file (3)\office-add-code-explanation-file\new - Copy\users.db
+2025-06-21 18:07:35,958 - INFO - Loaded 2 users from database.
+2025-06-21 18:07:35,960 - INFO - ThreadPoolExecutor created with max_workers=4
+2025-06-21 18:07:36,091 - INFO - TkinterDnD root created, main app is CTkToplevel.
+2025-06-21 18:07:36,091 - WARNING - Translation missing for key='app_title' in 'en' and also in en fallback.
+2025-06-21 18:07:36,178 - INFO - Archive folder secured: archives
+2025-06-21 18:07:36,178 - INFO - File monitoring started
+2025-06-21 18:07:36,178 - INFO - FileArchiveApp __init__ completed.
+2025-06-21 18:07:46,566 - INFO - User 'ana' logged in.
+2025-06-21 18:07:46,783 - INFO - Registering drop target for widget: .!ctktoplevel.!ctkframe.!ctktabview.!ctkframe.!ctkframe.!canvas.!ctkscrollableframe.!ctkframe4.!ctkcanvas
+2025-06-21 18:07:46,792 - INFO - Drop target registered.
+2025-06-21 18:07:46,792 - INFO - Drag & Drop events bound successfully.
+2025-06-21 18:07:46,954 - INFO - Hiding archive folder (non-recursive) STARTED: C:\Users\lenovo\Downloads\office2-feature-on-demand-translations\office2-feature-on-demand-translations\office-add-code-explanation-file (3)\office-add-code-explanation-file\new - Copy\archives
+2025-06-21 18:07:46,954 - INFO - Before Windows attrib command
+2025-06-21 18:07:46,973 - INFO - After Windows attrib command
+2025-06-21 18:07:46,973 - INFO - Archive folder hidden successfully (non-recursive) ENDED
+2025-06-21 18:07:46,973 - INFO - hide_archive_folder() execution time: 0.0192 seconds
+2025-06-21 18:07:46,973 - INFO - Logout button added to header placeholder.
+2025-06-21 18:08:05,060 - INFO - Attempting to switch language from 'en' to 'ar'
+2025-06-21 18:08:05,060 - INFO - Identified active tab key: 'tab_upload_files' for displayed name 'Upload Files'
+2025-06-21 18:08:05,060 - INFO - Language 'ar' not loaded. Attempting to load.
+2025-06-21 18:08:05,060 - INFO - Translations for 'ar' loaded successfully from c:\Users\lenovo\Downloads\office2-feature-on-demand-translations\office2-feature-on-demand-translations\office-add-code-explanation-file (3)\office-add-code-explanation-file\new - Copy\ar.json.
+2025-06-21 18:08:05,060 - INFO - Application language changed to: ar.
+2025-06-21 18:08:05,060 - INFO - Rebuilding UI for language: ar. Selected key: tab_upload_files
+2025-06-21 18:08:05,111 - WARNING - Translation missing for key 'label_user' in 'ar'. Falling back to en.
+2025-06-21 18:08:05,111 - WARNING - Translation missing for key='label_user' in 'ar' and also in en fallback.
+2025-06-21 18:08:05,111 - WARNING - Translation missing for key 'role_user' in 'ar'. Falling back to en.
+2025-06-21 18:08:05,111 - WARNING - Translation missing for key='role_user' in 'ar' and also in en fallback.
+2025-06-21 18:08:05,145 - INFO - Setting up tab content after language switch...
+2025-06-21 18:08:05,398 - INFO - Registering drop target for widget: .!ctktoplevel.!ctkframe.!ctktabview2.!ctkframe.!ctkframe.!canvas.!ctkscrollableframe.!ctkframe4.!ctkcanvas
+2025-06-21 18:08:05,398 - INFO - Drop target registered.
+2025-06-21 18:08:05,398 - INFO - Drag & Drop events bound successfully.
+2025-06-21 18:08:05,573 - INFO - Logout button added to header placeholder.
+2025-06-21 18:08:05,573 - INFO - Attempting to re-select tab using new label: '—›⁄ «·„·›« ' (from key: 'tab_upload_files')
+2025-06-21 18:08:05,573 - INFO - Scheduled selection of tab: '—›⁄ «·„·›« '
+2025-06-21 18:08:15,584 - INFO - Attempting to switch language from 'ar' to 'en'
+2025-06-21 18:08:15,584 - INFO - Identified active tab key: 'tab_settings' for displayed name '«·≈⁄œ«œ« '
+2025-06-21 18:08:15,584 - INFO - Application language changed to: en.
+2025-06-21 18:08:15,584 - INFO - Rebuilding UI for language: en. Selected key: tab_settings
+2025-06-21 18:08:15,627 - WARNING - Translation missing for key='label_user' in 'en' and also in en fallback.
+2025-06-21 18:08:15,627 - WARNING - Translation missing for key='role_user' in 'en' and also in en fallback.
+2025-06-21 18:08:15,641 - INFO - Setting up tab content after language switch...
+2025-06-21 18:08:15,863 - INFO - Registering drop target for widget: .!ctktoplevel.!ctkframe.!ctktabview3.!ctkframe.!ctkframe.!canvas.!ctkscrollableframe.!ctkframe4.!ctkcanvas
+2025-06-21 18:08:15,863 - INFO - Drop target registered.
+2025-06-21 18:08:15,863 - INFO - Drag & Drop events bound successfully.
+2025-06-21 18:08:16,022 - INFO - Logout button added to header placeholder.
+2025-06-21 18:08:16,022 - INFO - Attempting to re-select tab using new label: 'Settings' (from key: 'tab_settings')
+2025-06-21 18:08:16,022 - INFO - Scheduled selection of tab: 'Settings'
+2025-06-21 18:08:30,489 - INFO - Attempting to switch language from 'en' to 'ar'
+2025-06-21 18:08:30,489 - INFO - Identified active tab key: 'tab_upload_files' for displayed name 'Upload Files'
+2025-06-21 18:08:30,497 - INFO - Application language changed to: ar.
+2025-06-21 18:08:30,497 - INFO - Rebuilding UI for language: ar. Selected key: tab_upload_files
+2025-06-21 18:08:30,545 - WARNING - Translation missing for key 'label_user' in 'ar'. Falling back to en.
+2025-06-21 18:08:30,545 - WARNING - Translation missing for key='label_user' in 'ar' and also in en fallback.
+2025-06-21 18:08:30,545 - WARNING - Translation missing for key 'role_user' in 'ar'. Falling back to en.
+2025-06-21 18:08:30,545 - WARNING - Translation missing for key='role_user' in 'ar' and also in en fallback.
+2025-06-21 18:08:30,561 - INFO - Setting up tab content after language switch...
+2025-06-21 18:08:30,768 - INFO - Registering drop target for widget: .!ctktoplevel.!ctkframe.!ctktabview4.!ctkframe.!ctkframe.!canvas.!ctkscrollableframe.!ctkframe4.!ctkcanvas
+2025-06-21 18:08:30,768 - INFO - Drop target registered.
+2025-06-21 18:08:30,768 - INFO - Drag & Drop events bound successfully.
+2025-06-21 18:08:30,910 - INFO - Logout button added to header placeholder.
+2025-06-21 18:08:30,910 - INFO - Attempting to re-select tab using new label: '—›⁄ «·„·›« ' (from key: 'tab_upload_files')
+2025-06-21 18:08:30,910 - INFO - Scheduled selection of tab: '—›⁄ «·„·›« '
+2025-06-21 18:08:41,039 - INFO - User 'ana' logged out
+2025-06-21 18:08:41,039 - INFO - Application closing
+2025-06-21 18:27:11,098 - INFO - --- Logging initialized (Live Writing). Log file at: c:\Users\lenovo\Downloads\office2-feature-on-demand-translations\office2-feature-on-demand-translations\office-add-code-explanation-file (3)\office-add-code-explanation-file\new - Copy\archive_app.log ---
+2025-06-21 18:27:11,098 - CRITICAL - CRITICAL_LOG: Logging configured at DEBUG level.
+2025-06-21 18:27:11,138 - INFO - Application language changed to: en.
+2025-06-21 18:27:11,138 - CRITICAL - CRITICAL_LOG: FileArchiveApp __init__ started.
+2025-06-21 18:27:11,142 - INFO - Initializing user database at: c:\Users\lenovo\Downloads\office2-feature-on-demand-translations\office2-feature-on-demand-translations\office-add-code-explanation-file (3)\office-add-code-explanation-file\new - Copy\users.db
+2025-06-21 18:27:11,144 - INFO - Loaded 2 users from database.
+2025-06-21 18:27:11,144 - INFO - ThreadPoolExecutor created with max_workers=4
+2025-06-21 18:27:11,775 - INFO - TkinterDnD root created, main app is CTkToplevel.
+2025-06-21 18:27:11,775 - WARNING - Translation missing for key='app_title' in 'en' and also in en fallback.
+2025-06-21 18:27:11,871 - INFO - Archive folder secured: archives
+2025-06-21 18:27:11,871 - INFO - File monitoring started
+2025-06-21 18:27:11,871 - INFO - FileArchiveApp __init__ completed.
+2025-06-21 18:27:19,189 - INFO - Admin 'admin' logged in.
+2025-06-21 18:27:19,551 - INFO - Registering drop target for widget: .!ctktoplevel.!ctkframe.!ctktabview.!ctkframe.!ctkframe.!canvas.!ctkscrollableframe.!ctkframe4.!ctkcanvas
+2025-06-21 18:27:19,551 - INFO - Drop target registered.
+2025-06-21 18:27:19,551 - INFO - Drag & Drop events bound successfully.
+2025-06-21 18:27:20,024 - INFO - Archive folder shown: archives
+2025-06-21 18:27:20,226 - INFO - Logout button added to header placeholder.
+2025-06-21 18:27:30,996 - INFO - ArchiveController cache fully cleared.
+2025-06-21 18:27:30,996 - INFO - Admin triggered folder refresh, clearing full ArchiveController cache.
+2025-06-21 18:27:32,608 - INFO - Archive folder shown: archives
+2025-06-21 18:27:32,608 - INFO - Folders refreshed by admin.
+2025-06-21 18:27:42,614 - INFO - Attempting to switch language from 'en' to 'ar'
+2025-06-21 18:27:42,616 - INFO - Identified active tab key: 'tab_admin' for displayed name 'Admin'
+2025-06-21 18:27:42,616 - INFO - Language 'ar' not loaded. Attempting to load.
+2025-06-21 18:27:42,622 - INFO - Translations for 'ar' loaded successfully from c:\Users\lenovo\Downloads\office2-feature-on-demand-translations\office2-feature-on-demand-translations\office-add-code-explanation-file (3)\office-add-code-explanation-file\new - Copy\ar.json.
+2025-06-21 18:27:42,622 - INFO - Application language changed to: ar.
+2025-06-21 18:27:42,622 - INFO - Rebuilding UI for language: ar. Selected key: tab_admin
+2025-06-21 18:27:42,711 - WARNING - Translation missing for key 'label_user' in 'ar'. Falling back to en.
+2025-06-21 18:27:42,712 - WARNING - Translation missing for key='label_user' in 'ar' and also in en fallback.
+2025-06-21 18:27:42,713 - WARNING - Translation missing for key 'role_admin' in 'ar'. Falling back to en.
+2025-06-21 18:27:42,721 - WARNING - Translation missing for key='role_admin' in 'ar' and also in en fallback.
+2025-06-21 18:27:42,755 - INFO - Setting up tab content after language switch...
+2025-06-21 18:27:43,010 - INFO - Registering drop target for widget: .!ctktoplevel.!ctkframe.!ctktabview2.!ctkframe.!ctkframe.!canvas.!ctkscrollableframe.!ctkframe4.!ctkcanvas
+2025-06-21 18:27:43,010 - INFO - Drop target registered.
+2025-06-21 18:27:43,010 - INFO - Drag & Drop events bound successfully.
+2025-06-21 18:27:43,451 - INFO - Logout button added to header placeholder.
+2025-06-21 18:27:43,451 - INFO - Attempting to re-select tab using new label: '«·≈œ«—…' (from key: 'tab_admin')
+2025-06-21 18:27:43,451 - INFO - Scheduled selection of tab: '«·≈œ«—…'
+2025-06-21 18:27:49,591 - INFO - User 'admin' logged out
+2025-06-21 18:27:49,591 - INFO - Application closing
+2025-06-21 19:17:39,138 - INFO - --- Logging initialized (Live Writing). Log file at: c:\Users\lenovo\Downloads\office2-feature-on-demand-translations\office2-feature-on-demand-translations\office-add-code-explanation-file (3)\office-add-code-explanation-file\new - Copy\archive_app.log ---
+2025-06-21 19:17:39,138 - CRITICAL - CRITICAL_LOG: Logging configured at DEBUG level.
+2025-06-21 19:17:39,171 - INFO - Application language changed to: en.
+2025-06-21 19:17:39,171 - CRITICAL - CRITICAL_LOG: FileArchiveApp __init__ started.
+2025-06-21 19:17:39,171 - INFO - Initializing user database at: c:\Users\lenovo\Downloads\office2-feature-on-demand-translations\office2-feature-on-demand-translations\office-add-code-explanation-file (3)\office-add-code-explanation-file\new - Copy\users.db
+2025-06-21 19:17:39,175 - INFO - Loaded 2 users from database.
+2025-06-21 19:17:39,177 - INFO - ThreadPoolExecutor created with max_workers=4
+2025-06-21 19:17:39,318 - INFO - TkinterDnD root created, main app is CTkToplevel.
+2025-06-21 19:17:39,318 - WARNING - Translation missing for key='app_title' in 'en' and also in en fallback.
+2025-06-21 19:17:39,398 - INFO - Archive folder secured: archives
+2025-06-21 19:17:39,398 - INFO - File monitoring started
+2025-06-21 19:17:39,398 - INFO - FileArchiveApp __init__ completed.
+2025-06-21 19:17:48,707 - INFO - Admin 'admin' logged in.
+2025-06-21 19:17:49,097 - INFO - Registering drop target for widget: .!ctktoplevel.!ctkframe.!ctktabview.!ctkframe.!ctkframe.!canvas.!ctkscrollableframe.!ctkframe4.!ctkcanvas
+2025-06-21 19:17:49,097 - INFO - Drop target registered.
+2025-06-21 19:17:49,097 - INFO - Drag & Drop events bound successfully.
+2025-06-21 19:17:49,630 - INFO - Archive folder shown: archives
+2025-06-21 19:17:49,857 - INFO - Logout button added to header placeholder.
+2025-06-21 19:18:03,255 - INFO - Created temporary directory for archive search: C:\Users\lenovo\AppData\Local\Temp\tmplwt8s00x
+2025-06-21 19:18:03,255 - WARNING - Translation missing for key='ctklabel_text_search_archive' in 'en' and also in en fallback.
+2025-06-21 19:18:14,314 - INFO - User 'admin' logged out
+2025-06-21 19:18:14,314 - INFO - Application closing
+2025-06-21 19:19:02,464 - INFO - --- Logging initialized (Live Writing). Log file at: c:\Users\lenovo\Downloads\office2-feature-on-demand-translations\office2-feature-on-demand-translations\office-add-code-explanation-file (3)\office-add-code-explanation-file\new - Copy\archive_app.log ---
+2025-06-21 19:19:02,464 - CRITICAL - CRITICAL_LOG: Logging configured at DEBUG level.
+2025-06-21 19:19:02,501 - INFO - Application language changed to: en.
+2025-06-21 19:19:02,501 - CRITICAL - CRITICAL_LOG: FileArchiveApp __init__ started.
+2025-06-21 19:19:02,501 - INFO - Initializing user database at: c:\Users\lenovo\Downloads\office2-feature-on-demand-translations\office2-feature-on-demand-translations\office-add-code-explanation-file (3)\office-add-code-explanation-file\new - Copy\users.db
+2025-06-21 19:19:02,501 - INFO - Loaded 2 users from database.
+2025-06-21 19:19:02,501 - INFO - ThreadPoolExecutor created with max_workers=4
+2025-06-21 19:19:02,646 - INFO - TkinterDnD root created, main app is CTkToplevel.
+2025-06-21 19:19:02,647 - WARNING - Translation missing for key='app_title' in 'en' and also in en fallback.
+2025-06-21 19:19:02,725 - INFO - Archive folder secured: archives
+2025-06-21 19:19:02,725 - INFO - File monitoring started
+2025-06-21 19:19:02,725 - INFO - FileArchiveApp __init__ completed.
+2025-06-21 19:19:12,183 - INFO - Admin 'admin' logged in.
+2025-06-21 19:19:12,539 - INFO - Registering drop target for widget: .!ctktoplevel.!ctkframe.!ctktabview.!ctkframe.!ctkframe.!canvas.!ctkscrollableframe.!ctkframe4.!ctkcanvas
+2025-06-21 19:19:12,539 - INFO - Drop target registered.
+2025-06-21 19:19:12,539 - INFO - Drag & Drop events bound successfully.
+2025-06-21 19:19:13,027 - INFO - Archive folder shown: archives
+2025-06-21 19:19:13,302 - INFO - Logout button added to header placeholder.
+2025-06-21 19:19:21,969 - INFO - Created temporary directory for archive search: C:\Users\lenovo\AppData\Local\Temp\tmprvjh1u3n
+2025-06-21 19:19:21,978 - WARNING - Translation missing for key='ctklabel_text_search_archive' in 'en' and also in en fallback.
+2025-06-21 19:19:34,890 - INFO - ArchiveController cache fully cleared.
+2025-06-21 19:19:34,890 - INFO - Admin triggered folder refresh, clearing full ArchiveController cache.
+2025-06-21 19:19:35,656 - INFO - Created temporary directory for archive search: C:\Users\lenovo\AppData\Local\Temp\tmp7_eqc8p5
+2025-06-21 19:19:35,656 - WARNING - Translation missing for key='ctklabel_text_search_archive' in 'en' and also in en fallback.
+2025-06-21 19:19:35,677 - INFO - Search for '' returned 69 results.
+2025-06-21 19:19:36,676 - INFO - Archive folder shown: archives
+2025-06-21 19:19:36,676 - INFO - Folders refreshed by admin.
+2025-06-21 19:20:01,824 - INFO - Attempting to switch language from 'en' to 'ar'
+2025-06-21 19:20:01,840 - INFO - Identified active tab key: 'tab_upload_files' for displayed name 'Upload Files'
+2025-06-21 19:20:01,840 - INFO - Language 'ar' not loaded. Attempting to load.
+2025-06-21 19:20:01,840 - INFO - Translations for 'ar' loaded successfully from c:\Users\lenovo\Downloads\office2-feature-on-demand-translations\office2-feature-on-demand-translations\office-add-code-explanation-file (3)\office-add-code-explanation-file\new - Copy\ar.json.
+2025-06-21 19:20:01,840 - INFO - Application language changed to: ar.
+2025-06-21 19:20:01,840 - INFO - Rebuilding UI for language: ar. Selected key: tab_upload_files
+2025-06-21 19:20:01,980 - INFO - Setting up tab content after language switch...
+2025-06-21 19:20:02,265 - INFO - Registering drop target for widget: .!ctktoplevel.!ctkframe.!ctktabview2.!ctkframe.!ctkframe.!canvas.!ctkscrollableframe.!ctkframe4.!ctkcanvas
+2025-06-21 19:20:02,265 - INFO - Drop target registered.
+2025-06-21 19:20:02,265 - INFO - Drag & Drop events bound successfully.
+2025-06-21 19:20:02,794 - INFO - Logout button added to header placeholder.
+2025-06-21 19:20:02,794 - INFO - Attempting to re-select tab using new label: '—›⁄ «·„·›« ' (from key: 'tab_upload_files')
+2025-06-21 19:20:02,794 - INFO - Scheduled selection of tab: '—›⁄ «·„·›« '
+2025-06-21 19:20:16,124 - INFO - Created temporary directory for archive search: C:\Users\lenovo\AppData\Local\Temp\tmphwxq8b_c
+2025-06-21 19:20:16,140 - WARNING - Translation missing for key 'ctklabel_text_search_archive' in 'ar'. Falling back to en.
+2025-06-21 19:20:16,140 - WARNING - Translation missing for key='ctklabel_text_search_archive' in 'ar' and also in en fallback.
+2025-06-21 19:20:16,160 - INFO - Search for '' returned 69 results.
+2025-06-21 19:20:19,879 - INFO - Created temporary directory for archive search: C:\Users\lenovo\AppData\Local\Temp\tmpexlgh7nm
+2025-06-21 19:20:19,906 - WARNING - Translation missing for key 'ctklabel_text_search_archive' in 'ar'. Falling back to en.
+2025-06-21 19:20:19,906 - WARNING - Translation missing for key='ctklabel_text_search_archive' in 'ar' and also in en fallback.
+2025-06-21 19:20:19,918 - INFO - Search for '' returned 69 results.
+2025-06-21 19:41:05,344 - INFO - User 'admin' logged out
+2025-06-21 19:41:05,352 - INFO - Application closing
+2025-06-21 19:41:53,462 - INFO - --- Logging initialized (Live Writing). Log file at: c:\Users\lenovo\Downloads\office2-feature-on-demand-translations\office2-feature-on-demand-translations\office-add-code-explanation-file (3)\office-add-code-explanation-file\new - Copy\archive_app.log ---
+2025-06-21 19:41:53,462 - CRITICAL - CRITICAL_LOG: Logging configured at DEBUG level.
+2025-06-21 19:41:53,501 - INFO - Application language changed to: en.
+2025-06-21 19:41:53,502 - CRITICAL - CRITICAL_LOG: FileArchiveApp __init__ started.
+2025-06-21 19:41:53,502 - INFO - Initializing user database at: c:\Users\lenovo\Downloads\office2-feature-on-demand-translations\office2-feature-on-demand-translations\office-add-code-explanation-file (3)\office-add-code-explanation-file\new - Copy\users.db
+2025-06-21 19:41:53,504 - INFO - Loaded 2 users from database.
+2025-06-21 19:41:53,505 - INFO - ThreadPoolExecutor created with max_workers=4
+2025-06-21 19:41:53,626 - INFO - TkinterDnD root created, main app is CTkToplevel.
+2025-06-21 19:41:53,627 - WARNING - Translation missing for key='app_title' in 'en' and also in en fallback.
+2025-06-21 19:41:53,691 - INFO - Archive folder secured: archives
+2025-06-21 19:41:53,706 - INFO - File monitoring started
+2025-06-21 19:41:53,706 - INFO - FileArchiveApp __init__ completed.
+2025-06-21 19:42:11,468 - INFO - Admin 'admin' logged in.
+2025-06-21 19:42:11,824 - INFO - Registering drop target for widget: .!ctktoplevel.!ctkframe.!ctktabview.!ctkframe.!ctkframe.!canvas.!ctkscrollableframe.!ctkframe4.!ctkcanvas
+2025-06-21 19:42:11,828 - INFO - Drop target registered.
+2025-06-21 19:42:11,828 - INFO - Drag & Drop events bound successfully.
+2025-06-21 19:42:12,297 - INFO - Archive folder shown: archives
+2025-06-21 19:42:12,506 - INFO - Logout button added to header placeholder.
+2025-06-21 19:42:33,655 - INFO - Attempting to switch language from 'en' to 'ar'
+2025-06-21 19:42:33,655 - INFO - Identified active tab key: 'tab_upload_files' for displayed name 'Upload Files'
+2025-06-21 19:42:33,666 - INFO - Language 'ar' not loaded. Attempting to load.
+2025-06-21 19:42:33,666 - INFO - Translations for 'ar' loaded successfully from c:\Users\lenovo\Downloads\office2-feature-on-demand-translations\office2-feature-on-demand-translations\office-add-code-explanation-file (3)\office-add-code-explanation-file\new - Copy\ar.json.
+2025-06-21 19:42:33,666 - INFO - Application language changed to: ar.
+2025-06-21 19:42:33,666 - INFO - Rebuilding UI for language: ar. Selected key: tab_upload_files
+2025-06-21 19:42:33,818 - INFO - Setting up tab content after language switch...
+2025-06-21 19:42:34,084 - INFO - Registering drop target for widget: .!ctktoplevel.!ctkframe.!ctktabview2.!ctkframe.!ctkframe.!canvas.!ctkscrollableframe.!ctkframe4.!ctkcanvas
+2025-06-21 19:42:34,084 - INFO - Drop target registered.
+2025-06-21 19:42:34,084 - INFO - Drag & Drop events bound successfully.
+2025-06-21 19:42:34,540 - INFO - Logout button added to header placeholder.
+2025-06-21 19:42:34,540 - INFO - Attempting to re-select tab using new label: '—›⁄ «·„·›« ' (from key: 'tab_upload_files')
+2025-06-21 19:42:34,540 - INFO - Scheduled selection of tab: '—›⁄ «·„·›« '
+2025-06-21 19:42:36,193 - INFO - User 'admin' logged out
+2025-06-21 19:42:36,209 - INFO - Application closing

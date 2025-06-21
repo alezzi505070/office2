@@ -23,8 +23,9 @@ import win32print
 # Add this near your other imports
 # Import the module itself, and specific functions you need.
 # DO NOT import CURRENT_LANGUAGE directly.
-from translations import load_translations, set_language, get_translation
-import translations # <-- Add this line
+# NEW - Correctly imports only what's available
+from translations import set_language, get_translation
+import translations # Also import the module itself to access global variables if needed
 
 from concurrent.futures import ThreadPoolExecutor
 import json
