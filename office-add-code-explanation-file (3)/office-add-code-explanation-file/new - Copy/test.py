@@ -315,6 +315,9 @@ class FileArchiveApp:
         self.main_frame.grid_rowconfigure(1, weight=1)  # Tab content expands vertically
         self.main_frame.grid_columnconfigure(0, weight=1) # Tabs expand horizontally
 
+        # Set initial directionality
+        self._set_ui_direction()
+
         # --- Header Frame ---
         self.header_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent", height=60) # Set consistent height
         self.header_frame.grid(row=0, column=0, sticky="ew", padx=15, pady=(10, 5)) # Padding for content inside header
@@ -404,6 +407,109 @@ class FileArchiveApp:
  # =========================================================================
     # ==== LANGUAGE SWITCHING (CORRECTED) =====================================
     # =========================================================================
+    def _set_ui_direction(self):
+        """Sets the UI direction based on the current language."""
+        direction = "rtl" if translations.CURRENT_LANGUAGE == "ar" else "ltr"
+        # For CTk widgets, direct RTL support is limited.
+        # We might need to adjust gridding/packing or rely on underlying Tkinter if possible.
+        # This is a placeholder for where such logic would go.
+        # Example for a standard Tkinter widget (may not apply directly to CTk):
+        # self.main_app.tk_setPalette(background='white', foreground='black') # Example of tk command
+        # For now, we'll log and proceed. More specific changes might be needed per widget.
+        logging.info(f"Attempting to set UI direction to {direction} for language {translations.CURRENT_LANGUAGE}.")
+
+        # Potentially, re-grid or re-pack elements based on direction.
+        # For example, if a CTkFrame contains elements gridded left-to-right,
+        # for RTL, you might need to change column orders or use sticky="e" vs "w".
+
+        # Example: Adjusting main_frame's internal configuration (if it had one for direction)
+        # No direct CTk method for this, so this is conceptual.
+        # If CTk widgets respond to underlying Tk options:
+        try:
+            if hasattr(self.main_app, 'tk'): # Check if it's a Tkinter-based window
+                 # For Tkinter, some widgets might respect this.
+                 # self.main_app.tk.call('tk', 'scaling', '-displayof', '.', 1.0) # Just an example of a tk call
+                 # The actual command for RTL might be specific or not available at top level.
+                 # Forcing RTL via Tk is complex and widget-dependent.
+                 # A common approach for full RTL in Tkinter involves setting it on specific widgets
+                 # or using RTL-aware layout techniques.
+                 # For CustomTkinter, we rely on its own layout mechanisms.
+                 # If a widget supports `anchor` or `sticky`, these might be adjusted.
+                 # Example: self.some_label.configure(anchor='e' if direction == 'rtl' else 'w')
+                 pass # No direct top-level CTk call for global RTL.
+        except Exception as e:
+            logging.warning(f"Could not apply Tkinter-level RTL settings: {e}")
+
+        # Re-apply layouts for key components if necessary
+        if hasattr(self, 'header_frame') and self.header_frame.winfo_exists():
+            self._configure_header_layout(direction)
+        if hasattr(self, 'status_frame') and self.status_frame.winfo_exists():
+            self._configure_status_bar_layout(direction)
+
+        # Tabview itself doesn't have a direction, but its internal widgets might.
+        # This would be handled when tabs are rebuilt/repopulated if specific widgets inside need adjustment.
+        logging.info(f"UI direction set to {direction} conceptually. Specific widget adjustments may be needed.")
+
+    def _configure_header_layout(self, direction):
+        """Configures the layout of the header based on LTR/RTL direction."""
+        if not hasattr(self, 'header_frame') or not self.header_frame.winfo_exists():
+            return
+
+        # Clear existing grid
+        for widget in self.header_frame.winfo_children():
+            widget.grid_forget()
+
+        # Re-grid elements based on direction
+        title_label = next((w for w in self.header_frame.winfo_children() if isinstance(w, ctk.CTkLabel) and self._t("ctklabel_text_file_archiving_system") in w.cget("text")), None)
+        user_label_widget = self.user_label
+        language_button_widget = self.language_button
+        logout_placeholder_widget = self.logout_button_placeholder
+
+        if direction == "rtl":
+            if title_label: title_label.grid(row=0, column=3, sticky="e", padx=(10, 0))
+            if logout_placeholder_widget: logout_placeholder_widget.grid(row=0, column=0, padx=(0, 5), sticky="w")
+            if language_button_widget: language_button_widget.grid(row=0, column=1, padx=10, sticky="w")
+            if user_label_widget: user_label_widget.grid(row=0, column=2, padx=10, sticky="w")
+            self.header_frame.grid_columnconfigure(0, weight=0) # Logout
+            self.header_frame.grid_columnconfigure(1, weight=0) # Language
+            self.header_frame.grid_columnconfigure(2, weight=0) # User
+            self.header_frame.grid_columnconfigure(3, weight=1) # Title
+        else: # LTR
+            if title_label: title_label.grid(row=0, column=0, sticky="w", padx=(0, 10))
+            if user_label_widget: user_label_widget.grid(row=0, column=1, padx=10, sticky="e")
+            if language_button_widget: language_button_widget.grid(row=0, column=2, padx=10, sticky="e")
+            if logout_placeholder_widget: logout_placeholder_widget.grid(row=0, column=3, padx=(5, 0), sticky="e")
+            self.header_frame.grid_columnconfigure(0, weight=1) # Title
+            self.header_frame.grid_columnconfigure(1, weight=0) # User
+            self.header_frame.grid_columnconfigure(2, weight=0) # Language
+            self.header_frame.grid_columnconfigure(3, weight=0) # Logout
+        logging.info(f"Header layout configured for {direction}.")
+
+    def _configure_status_bar_layout(self, direction):
+        """Configures the layout of the status bar based on LTR/RTL direction."""
+        if not hasattr(self, 'status_frame') or not self.status_frame.winfo_exists():
+            return
+
+        notification_label_widget = self.notification_label
+        progress_bar_widget = self.progress_bar
+
+        # Clear existing grid
+        if notification_label_widget: notification_label_widget.grid_forget()
+        if progress_bar_widget: progress_bar_widget.grid_forget()
+
+        if direction == "rtl":
+            if notification_label_widget: notification_label_widget.grid(row=0, column=1, sticky="e", padx=10)
+            if progress_bar_widget: progress_bar_widget.grid(row=0, column=0, padx=10, sticky="w")
+            self.status_frame.grid_columnconfigure(0, weight=0) # Progress bar
+            self.status_frame.grid_columnconfigure(1, weight=1) # Notification
+        else: # LTR
+            if notification_label_widget: notification_label_widget.grid(row=0, column=0, sticky="w", padx=10)
+            if progress_bar_widget: progress_bar_widget.grid(row=0, column=1, padx=10, sticky="e")
+            self.status_frame.grid_columnconfigure(0, weight=1) # Notification
+            self.status_frame.grid_columnconfigure(1, weight=0) # Progress bar
+        logging.info(f"Status bar layout configured for {direction}.")
+
+
     def switch_language(self):
         """Switches the application language and rebuilds the UI."""
         
@@ -503,14 +609,25 @@ class FileArchiveApp:
 
         self.status_frame = ctk.CTkFrame(self.main_frame, height=30, corner_radius=0)
         self.status_frame.grid(row=2, column=0, sticky="ew", padx=0, pady=0)
-        self.status_frame.grid_columnconfigure(0, weight=1)
+        self.status_frame.grid_columnconfigure(0, weight=1) # Default for LTR
         self.notification_label = ctk.CTkLabel(self.status_frame, text=self._t("ctklabel_text_ready"), font=("Segoe UI", 12))
-        self.notification_label.grid(row=0, column=0, sticky="w", padx=10)
+        # self.notification_label.grid(row=0, column=0, sticky="w", padx=10) # Initial grid handled by _configure_status_bar_layout
         self.progress_bar = ctk.CTkProgressBar(self.status_frame, width=150)
-        self.progress_bar.grid(row=0, column=1, padx=10, sticky="e")
+        # self.progress_bar.grid(row=0, column=1, padx=10, sticky="e") # Initial grid handled by _configure_status_bar_layout
         self.progress_bar.set(0)
 
+        # Apply RTL/LTR to status bar children
+        self._configure_status_bar_layout("rtl" if translations.CURRENT_LANGUAGE == "ar" else "ltr")
+
+
         self.add_logout_button()
+
+        # Apply RTL/LTR to header children
+        self._configure_header_layout("rtl" if translations.CURRENT_LANGUAGE == "ar" else "ltr")
+
+        # Apply general UI direction
+        self._set_ui_direction()
+
 
         if selected_tab_key:
             try:
@@ -993,87 +1110,146 @@ class FileArchiveApp:
         if not self.current_user:
             return
 
+        # Ensure only admin can change their own password via this UI route
+        if self.current_user["role"].lower() != "admin":
+            messagebox.showerror(self._t("error_title_permission_denied"),
+                                 self._t("error_only_admin_can_change_password_here"),
+                                 parent=self.main_app)
+            return
+
         change_pwd_win = ctk.CTkToplevel(self.main_app)
-        change_pwd_win.transient(self.main_app) # Stay on top
-        change_pwd_win.title("Change Password")
-        self.center_window(change_pwd_win, 400, 250)
+        change_pwd_win.transient(self.main_app)
+        change_pwd_win.title(self._t("dialog_title_change_password"))
+        change_pwd_win.attributes("-topmost", True)
+        # Adjusted size for better layout
+        self.center_window(change_pwd_win, 400, 380)
         change_pwd_win.grab_set()
 
-        ctk.CTkLabel(change_pwd_win, text=get_translation("ctklabel_text_change_password"),
-                     font=("Segoe UI", 20, "bold")).pack(pady=15)
+        dialog_main_frame = ctk.CTkFrame(change_pwd_win, fg_color="transparent")
+        dialog_main_frame.pack(fill="both", expand=True, padx=20, pady=20)
 
-        # Current password
-        current_pwd = ctk.CTkEntry(change_pwd_win, placeholder_text=get_translation("ctkentry_placeholder_text_current_password"),
-                                 show="*", width=250, font=("Segoe UI", 14))
-        current_pwd.pack(pady=10)
+        ctk.CTkLabel(dialog_main_frame, text="🔑 " + self._t("ctklabel_text_change_password"),
+                     font=("Segoe UI", 20, "bold")).pack(pady=(0,15))
 
-        # New password
-        new_pwd = ctk.CTkEntry(change_pwd_win, placeholder_text=get_translation("ctkentry_placeholder_text_new_password"),
-                              show="*", width=250, font=("Segoe UI", 14))
-        new_pwd.pack(pady=10)
+        # Current Password
+        ctk.CTkLabel(dialog_main_frame, text=self._t("ctklabel_text_current_password") + ":", font=("Segoe UI", 14)).pack(anchor="w", padx=5)
+        current_pwd_entry = ctk.CTkEntry(dialog_main_frame, placeholder_text=self._t("ctkentry_placeholder_text_enter_current_password"),
+                                 show="•", font=("Segoe UI", 14), height=35)
+        current_pwd_entry.pack(fill="x", padx=5, pady=(2,10))
 
-        # Confirm new password
-        confirm_pwd = ctk.CTkEntry(change_pwd_win, placeholder_text=get_translation("ctkentry_placeholder_text_confirm_new_password"),
-                                  show="*", width=250, font=("Segoe UI", 14))
-        confirm_pwd.pack(pady=10)
+        # New Password
+        ctk.CTkLabel(dialog_main_frame, text=self._t("ctklabel_text_new_password") + ":", font=("Segoe UI", 14)).pack(anchor="w", padx=5)
+        new_pwd_entry = ctk.CTkEntry(dialog_main_frame, placeholder_text=self._t("ctkentry_placeholder_text_enter_new_password"),
+                              show="•", font=("Segoe UI", 14), height=35)
+        new_pwd_entry.pack(fill="x", padx=5, pady=(2,10))
 
-        def change_password(self):
-            """Only allow admin users to change their own password"""
-            if not self.current_user:
+        # Confirm New Password
+        ctk.CTkLabel(dialog_main_frame, text=self._t("ctklabel_text_confirm_new_password") + ":", font=("Segoe UI", 14)).pack(anchor="w", padx=5)
+        confirm_pwd_entry = ctk.CTkEntry(dialog_main_frame, placeholder_text=self._t("ctkentry_placeholder_text_reenter_new_password"),
+                                  show="•", font=("Segoe UI", 14), height=35)
+        confirm_pwd_entry.pack(fill="x", padx=5, pady=(2,15))
+
+        # Action Buttons
+        buttons_frame = ctk.CTkFrame(dialog_main_frame, fg_color="transparent")
+        buttons_frame.pack(fill="x", pady=(10,0))
+        buttons_frame.grid_columnconfigure((0,1), weight=1)
+
+        cancel_btn = ctk.CTkButton(buttons_frame, text=self._t("ctkbutton_text_cancel"),
+                                command=change_pwd_win.destroy, font=("Segoe UI", 14), height=40,
+                                fg_color="gray50", hover_color="gray40")
+        cancel_btn.grid(row=0, column=0, padx=(0,5), sticky="ew")
+
+        def do_change_password_action():
+            curr = current_pwd_entry.get().strip()
+            new = new_pwd_entry.get().strip()
+            confirm = confirm_pwd_entry.get().strip()
+            username = self.current_user['username'] # Should be admin
+
+            if not (curr and new and confirm):
+                messagebox.showerror(self._t("error_title"), self._t("error_all_fields_required"), parent=change_pwd_win)
+                return
+            if new != confirm:
+                messagebox.showerror(self._t("error_title"), self._t("error_new_passwords_do_not_match"), parent=change_pwd_win)
+                return
+            if not pbkdf2_sha256.verify(curr, users[username]["password"]):
+                messagebox.showerror(self._t("error_title"), self._t("error_current_password_incorrect"), parent=change_pwd_win)
                 return
 
-            # If the current user is not an admin, disallow password change
-            if self.current_user["role"].lower() != "admin":
-                messagebox.showerror("Permission Denied", "Only admin users can change their password.", parent=self.main_app)
-                return
+            users[username]["password"] = pbkdf2_sha256.hash(new)
+            self.save_user_to_db(username, users[username]["password"], users[username]["role"]) # Save to DB
+            messagebox.showinfo(self._t("success_title"), self._t("success_password_changed"), parent=change_pwd_win)
+            logging.info(f"Admin '{username}' changed their password.")
+            change_pwd_win.destroy()
 
-            change_pwd_win = ctk.CTkToplevel(self.main_app)
-            change_pwd_win.transient(self.main_app)
-            change_pwd_win.title("Change Password")
-            self.center_window(change_pwd_win, 400, 250)
-            change_pwd_win.grab_set()
+        change_confirm_btn = ctk.CTkButton(buttons_frame, text="🔒 " + self._t("ctkbutton_text_confirm_change_password"),
+                                command=do_change_password_action, font=("Segoe UI", 14, "bold"), height=40,
+                                fg_color="#007bff", hover_color="#0069d9")
+        change_confirm_btn.grid(row=0, column=1, padx=(5,0), sticky="ew")
 
-            ctk.CTkLabel(change_pwd_win, text=get_translation("ctklabel_text_change_password"), font=("Segoe UI", 20, "bold")).pack(pady=15)
+        current_pwd_entry.focus_set()
+        change_pwd_win.bind("<Return>", lambda event: do_change_password_action())
+        change_pwd_win.bind("<Escape>", lambda event: change_pwd_win.destroy())
 
-            # Current password
-            current_pwd = ctk.CTkEntry(change_pwd_win, placeholder_text=get_translation("ctkentry_placeholder_text_current_password"), show="*", width=250, font=("Segoe UI", 14))
-            current_pwd.pack(pady=10)
-
-            # New password
-            new_pwd = ctk.CTkEntry(change_pwd_win, placeholder_text=get_translation("ctkentry_placeholder_text_new_password"), show="*", width=250, font=("Segoe UI", 14))
-            new_pwd.pack(pady=10)
-
-            # Confirm new password
-            confirm_pwd = ctk.CTkEntry(change_pwd_win, placeholder_text=get_translation("ctkentry_placeholder_text_confirm_new_password"), show="*", width=250, font=("Segoe UI", 14))
-            confirm_pwd.pack(pady=10)
-
-            def do_change_password():
-                curr = current_pwd.get().strip()
-                new = new_pwd.get().strip()
-                confirm = confirm_pwd.get().strip()
-                username = self.current_user['username']
-
-                if not (curr and new and confirm):
-                    messagebox.showerror("Error", "All fields are required", parent=change_pwd_win)
-                    return
-
-                if new != confirm:
-                    messagebox.showerror("Error", "New passwords do not match", parent=change_pwd_win)
-                    return
-
-                if not pbkdf2_sha256.verify(curr, users[username]["password"]):
-                    messagebox.showerror("Error", "Current password is incorrect", parent=change_pwd_win)
-                    return
-
-                users[username]["password"] = pbkdf2_sha256.hash(new)
-                messagebox.showinfo("Success", "Password changed successfully", parent=change_pwd_win)
-                logging.info(f"Admin '{username}' changed their password")
-                change_pwd_win.destroy()
-
-            # Change button
-            ctk.CTkButton(change_pwd_win, text=get_translation("ctkbutton_text_change_password"),
-                        command=do_change_password, width=200,
-                        font=("Segoe UI", 14, "bold")).pack(pady=15)
+    # This is the original nested change_password function, which is problematic.
+    # I've integrated its logic into the main change_password method above.
+    # This block can be removed or commented out.
+    # def change_password(self):
+    #     """Only allow admin users to change their own password"""
+    #     if not self.current_user:
+    #         return
+    #
+    #     # If the current user is not an admin, disallow password change
+    #     if self.current_user["role"].lower() != "admin":
+    #         messagebox.showerror("Permission Denied", "Only admin users can change their password.", parent=self.main_app)
+    #         return
+    #
+    #     change_pwd_win = ctk.CTkToplevel(self.main_app)
+    #     change_pwd_win.transient(self.main_app)
+    #     change_pwd_win.title("Change Password")
+    #     self.center_window(change_pwd_win, 400, 250)
+    #     change_pwd_win.grab_set()
+    #
+    #     ctk.CTkLabel(change_pwd_win, text=get_translation("ctklabel_text_change_password"), font=("Segoe UI", 20, "bold")).pack(pady=15)
+    #
+    #     # Current password
+    #     current_pwd = ctk.CTkEntry(change_pwd_win, placeholder_text=get_translation("ctkentry_placeholder_text_current_password"), show="*", width=250, font=("Segoe UI", 14))
+    #     current_pwd.pack(pady=10)
+    #
+    #     # New password
+    #     new_pwd = ctk.CTkEntry(change_pwd_win, placeholder_text=get_translation("ctkentry_placeholder_text_new_password"), show="*", width=250, font=("Segoe UI", 14))
+    #     new_pwd.pack(pady=10)
+    #
+    #     # Confirm new password
+    #     confirm_pwd = ctk.CTkEntry(change_pwd_win, placeholder_text=get_translation("ctkentry_placeholder_text_confirm_new_password"), show="*", width=250, font=("Segoe UI", 14))
+    #     confirm_pwd.pack(pady=10)
+    #
+    #     def do_change_password():
+    #         curr = current_pwd.get().strip()
+    #         new = new_pwd.get().strip()
+    #         confirm = confirm_pwd.get().strip()
+    #         username = self.current_user['username']
+    #
+    #         if not (curr and new and confirm):
+    #             messagebox.showerror("Error", "All fields are required", parent=change_pwd_win)
+    #             return
+    #
+    #         if new != confirm:
+    #             messagebox.showerror("Error", "New passwords do not match", parent=change_pwd_win)
+    #             return
+    #
+    #         if not pbkdf2_sha256.verify(curr, users[username]["password"]):
+    #             messagebox.showerror("Error", "Current password is incorrect", parent=change_pwd_win)
+    #             return
+    #
+    #         users[username]["password"] = pbkdf2_sha256.hash(new)
+    #         messagebox.showinfo("Success", "Password changed successfully", parent=change_pwd_win)
+    #         logging.info(f"Admin '{username}' changed their password")
+    #         change_pwd_win.destroy()
+    #
+    #     # Change button
+    #     ctk.CTkButton(change_pwd_win, text=get_translation("ctkbutton_text_change_password"),
+    #                 command=do_change_password, width=200,
+    #                 font=("Segoe UI", 14, "bold")).pack(pady=15)
     # --------------------------------------------------------------------------
     # Center Window Utility
     # --------------------------------------------------------------------------
@@ -1411,25 +1587,42 @@ class FileArchiveApp:
         """Opens a dialog to select and preview a file, including subsection path."""
         preview_win = ctk.CTkToplevel(self.main_app)
         preview_win.transient(self.main_app)
-        preview_win.title("File Preview")
-        self.center_window(preview_win, 450, 650) # Adjusted size
+        preview_win.title(self._t("dialog_title_file_preview"))
+        preview_win.attributes("-topmost", True)
+        # Adjusted width for potentially long file paths in selection, height can be dynamic or fixed.
+        self.center_window(preview_win, 500, 680)
         preview_win.grab_set()
 
-        # Create the selection interface within the preview window
-        sel_vars = self.create_selection_interface(preview_win)
-        if not sel_vars[0]: # Check if company selection was successful
-             # create_selection_interface handles messages/closing if no companies
+        dialog_main_frame = ctk.CTkFrame(preview_win, fg_color="transparent")
+        dialog_main_frame.pack(fill="both", expand=True, padx=15, pady=15)
+
+        ctk.CTkLabel(dialog_main_frame, text="🖼️ " + self._t("ctklabel_text_file_preview_selection"),
+                     font=("Segoe UI", 18, "bold")).pack(pady=(0,10))
+
+        # --- Selection Interface ---
+        # Frame to hold the selection widgets, allowing it to be distinct
+        selection_ui_frame = ctk.CTkFrame(dialog_main_frame, corner_radius=8)
+        selection_ui_frame.pack(fill="x", pady=(5,15), padx=5)
+
+        # Create_selection_interface now populates selection_ui_frame
+        sel_vars = self.create_selection_interface(selection_ui_frame)
+        if not sel_vars[0]:
+             preview_win.destroy() # Ensure dialog closes if selection interface fails
              return
 
-        # Unpack all 6 variables
         company_var, header_var, subheader_var, section_var, subsection_var, file_var = sel_vars
 
-        # Frame for preview button
-        button_frame = ctk.CTkFrame(preview_win, fg_color="transparent")
-        button_frame.pack(pady=20)
+        # --- Action Button ---
+        # Placed at the bottom of dialog_main_frame
+        preview_action_btn = ctk.CTkButton(dialog_main_frame,
+                                           text="👁️ " + self._t("ctkbutton_text_previewopen_selected_file"),
+                                           command=None, # Will be set below
+                                           font=("Segoe UI", 14, "bold"), height=40)
+        preview_action_btn.pack(pady=(10,0), fill="x", padx=5)
 
-        def perform_preview():
-            # Get all selected values
+
+        def perform_preview_action():
+            # Get all selected values (already available from sel_vars)
             comp = company_var.get()
             head = header_var.get()
             subh = subheader_var.get()
@@ -1496,43 +1689,73 @@ class FileArchiveApp:
                     logging.error(f"[Preview] Error displaying image {file_path}: {e}", exc_info=True)
             else:
                 # For non-image files, offer to open with the default OS application.
-                if messagebox.askyesno("Open File", f"'{file_selected}' is not an image.\nDo you want to open it with the default application?", parent=preview_win):
+            if messagebox.askyesno(self._t("dialog_title_open_file"),
+                                   self._t("confirm_open_non_image_file").format(filename=file_selected),
+                                   parent=preview_win):
                     try:
                         self.open_path(file_path)
                     except Exception as e:
-                        messagebox.showerror("Open Error", f"Could not open file:\n{e}", parent=preview_win)
+                    messagebox.showerror(self._t("error_title_open_error"),
+                                         self._t("error_could_not_open_file_os").format(error=e),
+                                         parent=preview_win)
                         logging.error(f"[Preview] Error opening file {file_path} with OS: {e}", exc_info=True)
 
-        preview_btn = ctk.CTkButton(button_frame, text=get_translation("ctkbutton_text_previewopen_selected_file"), command=perform_preview, font=("Segoe UI", 14))
-        preview_btn.pack()
+        preview_action_btn.configure(command=perform_preview_action) # Set command after function defined
+        preview_win.bind("<Return>", lambda event: perform_preview_action())
+        preview_win.bind("<Escape>", lambda event: preview_win.destroy())
+
 
     def custom_rollback_interface(self):
         """Opens a dialog to select a file and rollback to a previous version, including subsection path."""
         rb_win = ctk.CTkToplevel(self.main_app)
         rb_win.transient(self.main_app)
-        rb_win.title("Rollback File")
-        self.center_window(rb_win, 450, 700) # Adjusted size for backup list
+        rb_win.title(self._t("dialog_title_rollback_file"))
+        rb_win.attributes("-topmost", True)
+        # Adjusted size for better layout including backup list
+        self.center_window(rb_win, 500, 720)
         rb_win.grab_set()
 
-        # Create the selection interface
-        sel_vars = self.create_selection_interface(rb_win)
-        if not sel_vars[0]: return # Exit if no companies
+        dialog_main_frame = ctk.CTkFrame(rb_win, fg_color="transparent")
+        dialog_main_frame.pack(fill="both", expand=True, padx=15, pady=15)
 
-        # Unpack all 6 variables
+        ctk.CTkLabel(dialog_main_frame, text="⏪ " + self._t("ctklabel_text_rollback_file_selection"),
+                     font=("Segoe UI", 18, "bold")).pack(pady=(0,10))
+
+        # --- Selection Interface for Original File ---
+        selection_ui_frame = ctk.CTkFrame(dialog_main_frame, corner_radius=8)
+        selection_ui_frame.pack(fill="x", pady=(5,10), padx=5)
+
+        sel_vars = self.create_selection_interface(selection_ui_frame)
+        if not sel_vars[0]:
+            rb_win.destroy()
+            return
+
         company_var, header_var, subheader_var, section_var, subsection_var, file_var = sel_vars
 
-        # Backup selection widgets
-        ctk.CTkLabel(rb_win, text=get_translation("ctklabel_text_select_backup_version"), font=("Segoe UI", 14)).pack(pady=(10,2), anchor="w", padx=20)
-        backup_var = ctk.StringVar(value="")
-        backup_menu = ctk.CTkOptionMenu(rb_win, variable=backup_var, values=[""], font=("Segoe UI", 12), width=300)
-        backup_menu.pack(pady=(0,10), padx=20, fill="x")
+        # --- Backup Version Selection ---
+        backup_selection_frame = ctk.CTkFrame(dialog_main_frame, corner_radius=8)
+        backup_selection_frame.pack(fill="x", pady=(10,15), padx=5)
 
-        # Frame for buttons
-        button_frame = ctk.CTkFrame(rb_win, fg_color="transparent")
-        button_frame.pack(pady=20)
+        ctk.CTkLabel(backup_selection_frame, text=self._t("ctklabel_text_select_backup_version_to_restore") + ":",
+                     font=("Segoe UI", 14)).pack(anchor="w", padx=15, pady=(10,2))
+        backup_var = ctk.StringVar(value="")
+        # Make OptionMenu wider and taller for better visibility of backup names
+        backup_menu = ctk.CTkOptionMenu(backup_selection_frame, variable=backup_var, values=[""],
+                                        font=("Segoe UI", 12), height=35, dynamic_width=True)
+        backup_menu.pack(fill="x", padx=15, pady=(0,15))
+
+        # --- Action Button ---
+        rollback_action_btn = ctk.CTkButton(dialog_main_frame,
+                                           text="🔄 " + self._t("ctkbutton_text_rollback_to_selected_backup"),
+                                           command=None, # Set below
+                                           font=("Segoe UI", 14, "bold"), height=40,
+                                           fg_color="#ffc107", text_color="#000000", # Yellow for caution
+                                           hover_color="#e0a800")
+        rollback_action_btn.pack(pady=(10,0), fill="x", padx=5)
 
 
         def update_backup_menu(*args):
+            # This function remains largely the same, but ensure translations for any UI messages if added
             comp = company_var.get()
             head = header_var.get()
             subh = subheader_var.get()
@@ -1674,8 +1897,9 @@ class FileArchiveApp:
 
         # Note: Removed the 'Delete' functionality from this button for clarity.
         # If delete is needed, it should be a separate function/button.
-        rollback_btn = ctk.CTkButton(button_frame, text=get_translation("ctkbutton_text_rollback_to_selected_backup"), command=perform_rollback, font=("Segoe UI", 14))
-        rollback_btn.pack()
+        rollback_action_btn.configure(command=perform_rollback)
+        rb_win.bind("<Return>", lambda event: perform_rollback())
+        rb_win.bind("<Escape>", lambda event: rb_win.destroy())
 
 
     # --------------------------------------------------------------------------
@@ -1755,182 +1979,165 @@ class FileArchiveApp:
         # Create a tabview within the admin tab for better organization
         """Configure the admin tab with administrative functions"""
         # Create a tabview within the admin tab for better organization
-        admin_tabview = ctk.CTkTabview(self.tab_admin)
-        admin_tabview.pack(fill="both", expand=True, padx=10, pady=10)
+        admin_tabview = ctk.CTkTabview(self.tab_admin, border_width=1, border_color=("gray70", "gray25"))
+        admin_tabview.pack(fill="both", expand=True, padx=5, pady=5)
 
-        # --- Get the names ONCE ---
-        system_tab_name = get_translation("admin_system_tab")
-        users_tab_name = get_translation("admin_users_tab")
-        stats_tab_name = get_translation("admin_stats_tab")
-        logging.debug(f"Admin Tab Names: System='{system_tab_name}', Users='{users_tab_name}', Stats='{stats_tab_name}'")
+        system_tab_name = "⚙️ " + self._t("admin_system_tab")
+        users_tab_name = "👥 " + self._t("admin_users_tab")
+        stats_tab_name = "📊 " + self._t("admin_stats_tab")
 
-        # --- Add tabs using the retrieved names ---
         system_tab = admin_tabview.add(system_tab_name)
         users_tab = admin_tabview.add(users_tab_name)
         stats_tab = admin_tabview.add(stats_tab_name)
-        logging.debug(f"Added admin sub-tabs.")
+
+        # Configure grid for all sub-tabs to allow content to expand
+        for tab in [system_tab, users_tab, stats_tab]:
+            tab.grid_columnconfigure(0, weight=1)
+            tab.grid_rowconfigure(0, weight=1) # Allow scrollable frame to expand
 
         # =====================================================================
-        # System Management Tab
+        # System Management Tab Content
         # =====================================================================
-        sys_frame = ctk.CTkFrame(system_tab)
-        sys_frame.pack(fill="both", expand=True, padx=20, pady=15)
+        sys_scroll_frame = ctk.CTkScrollableFrame(system_tab, corner_radius=0, fg_color="transparent")
+        sys_scroll_frame.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
+        sys_scroll_frame.grid_columnconfigure(0, weight=1)
 
-        # Header with icon
-        header_frame = ctk.CTkFrame(sys_frame, fg_color="transparent")
-        header_frame.pack(fill="x", pady=(10, 20))
+        # Section: System Actions
+        actions_section = ctk.CTkFrame(sys_scroll_frame, corner_radius=10)
+        actions_section.pack(fill="x", pady=(5,10), padx=5)
 
-        ctk.CTkLabel(header_frame, text=get_translation("ctklabel_text_empty_string"), font=("Segoe UI", 24)).pack(side="left", padx=(0, 10))
-        ctk.CTkLabel(header_frame, text=get_translation("ctklabel_text_system_management"),
-                    font=("Segoe UI", 20, "bold")).pack(side="left")
+        ctk.CTkLabel(actions_section, text=self._t("ctklabel_text_system_actions"), font=("Segoe UI", 16, "bold")).pack(anchor="w", padx=15, pady=(10,5))
 
-        # Admin buttons grid
-        admin_buttons = ctk.CTkFrame(sys_frame, fg_color="transparent")
-        admin_buttons.pack(fill="x", pady=10)
-        admin_buttons.grid_columnconfigure((0, 1), weight=1, uniform="column")
+        admin_buttons_grid = ctk.CTkFrame(actions_section, fg_color="transparent")
+        admin_buttons_grid.pack(fill="x", padx=15, pady=(5,15))
+        admin_buttons_grid.grid_columnconfigure((0, 1), weight=1, uniform="admin_action_btn")
 
-        # Refresh folders button with icon
-        refresh_btn = ctk.CTkButton(admin_buttons, text=get_translation("ctkbutton_text_refresh_folders"),
-                                    command=self.refresh_folders,
-                                    font=("Segoe UI", 14),
-                                    height=45,
-                                    corner_radius=8)
-        refresh_btn.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
+        refresh_btn = ctk.CTkButton(admin_buttons_grid, text="🔄 " + self._t("ctkbutton_text_refresh_folders"),
+                                    command=self.refresh_folders, font=("Segoe UI", 14), height=40)
+        refresh_btn.grid(row=0, column=0, padx=(0,5), pady=5, sticky="ew")
 
-        # Search archive button with icon
-        search_btn = ctk.CTkButton(admin_buttons, text=get_translation("ctkbutton_text_search_archive"),
-                                command=self.search_archive,
-                                font=("Segoe UI", 14),
-                                height=45,
-                                corner_radius=8)
-        search_btn.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
+        search_btn = ctk.CTkButton(admin_buttons_grid, text="🔍 " + self._t("ctkbutton_text_search_archive"),
+                                command=self.search_archive, font=("Segoe UI", 14), height=40)
+        search_btn.grid(row=0, column=1, padx=(5,0), pady=5, sticky="ew")
 
-        # Dashboard button (full width) with icon
-        dashboard_btn = ctk.CTkButton(sys_frame, text=get_translation("ctkbutton_text_open_admin_dashboard"),
-                                    command=self.open_dashboard,
-                                    font=("Segoe UI", 14, "bold"),
-                                    height=45,
-                                    corner_radius=8,
+        dashboard_btn = ctk.CTkButton(actions_section, text="📈 " + self._t("ctkbutton_text_open_admin_dashboard"),
+                                    command=self.open_dashboard, font=("Segoe UI", 14, "bold"), height=40,
                                     fg_color="#2D7FF9", hover_color="#1A6CD6")
-        dashboard_btn.pack(fill="x", pady=15)
+        dashboard_btn.pack(fill="x", padx=15, pady=(5,15))
 
-        # System info section
-        info_frame = ctk.CTkFrame(sys_frame)
-        info_frame.pack(fill="x", pady=15)
+        # Section: System Information
+        sys_info_section = ctk.CTkFrame(sys_scroll_frame, corner_radius=10)
+        sys_info_section.pack(fill="x", pady=10, padx=5)
 
-        ctk.CTkLabel(info_frame, text=get_translation("ctklabel_text_system_information"),
-                    font=("Segoe UI", 16, "bold")).pack(anchor="w", padx=15, pady=(10, 5))
+        ctk.CTkLabel(sys_info_section, text=self._t("ctklabel_text_system_information"), font=("Segoe UI", 16, "bold")).pack(anchor="w", padx=15, pady=(10,5))
 
-        # Get system info
-        import platform
-        system_info = f"OS: {platform.system()} {platform.version()}\n"
-        system_info += f"Python: {platform.python_version()}\n"
-        system_info += f"Archives Path: {self.archives_path}"
-
-        info_text = ctk.CTkTextbox(info_frame, height=80, font=("Segoe UI", 13))
-        info_text.pack(fill="x", padx=15, pady=(5, 10))
-        info_text.insert("1.0", system_info)
-        info_text.configure(state="disabled")
+        platform_info_text = (
+            f"{self._t('info_os')}: {platform.system()} {platform.version()}\n"
+            f"{self._t('info_python_version')}: {platform.python_version()}\n"
+            f"{self._t('info_archives_path')}: {os.path.abspath(self.archives_path)}"
+        )
+        info_textbox = ctk.CTkTextbox(sys_info_section, height=90, font=("Segoe UI", 13), border_spacing=5)
+        info_textbox.pack(fill="x", padx=15, pady=(5,15))
+        info_textbox.insert("1.0", platform_info_text)
+        info_textbox.configure(state="disabled")
 
         # =====================================================================
-        # User Management Tab
+        # User Management Tab Content
         # =====================================================================
-        # Create a modern, card-based layout for user management
-        user_mgmt_frame = ctk.CTkFrame(users_tab)
-        user_mgmt_frame.pack(fill="both", expand=True, padx=20, pady=15)
+        user_mgmt_scroll_frame = ctk.CTkScrollableFrame(users_tab, corner_radius=0, fg_color="transparent")
+        user_mgmt_scroll_frame.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
+        user_mgmt_scroll_frame.grid_columnconfigure(0, weight=1)
 
-        # Header with icon and add user button
-        header_frame = ctk.CTkFrame(user_mgmt_frame, fg_color="transparent")
-        header_frame.pack(fill="x", pady=(10, 20))
-        header_frame.grid_columnconfigure(1, weight=1)
+        # Header: Add User Button & Title (Combined)
+        user_mgmt_header = ctk.CTkFrame(user_mgmt_scroll_frame, fg_color="transparent")
+        user_mgmt_header.pack(fill="x", pady=(5,10), padx=5)
+        user_mgmt_header.grid_columnconfigure(0, weight=1) # Title expands
 
-        ctk.CTkLabel(header_frame, text=get_translation("ctklabel_text_empty_string"), font=("Segoe UI", 24)).grid(row=0, column=0, padx=(0, 10))
-        ctk.CTkLabel(header_frame, text=get_translation("ctklabel_text_user_management"),
-                    font=("Segoe UI", 20, "bold")).grid(row=0, column=1, sticky="w")
+        ctk.CTkLabel(user_mgmt_header, text=self._t("ctklabel_text_user_management"), font=("Segoe UI", 18, "bold")).grid(row=0, column=0, sticky="w", padx=(10,0))
 
-        # Add user button with icon
-        add_user_btn = ctk.CTkButton(header_frame, text=get_translation("ctkbutton_text_add_user"),
-                                    command=self.add_user_dialog,
-                                    font=("Segoe UI", 14),
-                                    height=40,
-                                    width=120,
-                                    corner_radius=8,
+        add_user_btn = ctk.CTkButton(user_mgmt_header, text="➕ " + self._t("ctkbutton_text_add_user"),
+                                    command=self.add_user_dialog, font=("Segoe UI", 14), height=35,
                                     fg_color="#28a745", hover_color="#218838")
-        add_user_btn.grid(row=0, column=2, padx=10)
+        add_user_btn.grid(row=0, column=1, padx=10, sticky="e")
 
-        # Search and filter section
-        filter_frame = ctk.CTkFrame(user_mgmt_frame, fg_color="transparent")
-        filter_frame.pack(fill="x", pady=(0, 10))
+        # Filters Section
+        user_filters_section = ctk.CTkFrame(user_mgmt_scroll_frame, corner_radius=10)
+        user_filters_section.pack(fill="x", pady=10, padx=5)
 
-        ctk.CTkLabel(filter_frame, text=get_translation("ctklabel_text_empty_string"), font=("Segoe UI", 16)).pack(side="left", padx=(0, 5))
+        ctk.CTkLabel(user_filters_section, text=self._t("ctklabel_text_filter_users"), font=("Segoe UI", 16, "bold")).pack(anchor="w", padx=15, pady=(10,5))
 
+        filter_controls_frame = ctk.CTkFrame(user_filters_section, fg_color="transparent")
+        filter_controls_frame.pack(fill="x", padx=15, pady=(5,15))
+        filter_controls_frame.grid_columnconfigure(1, weight=1) # Search entry expands
+        filter_controls_frame.grid_columnconfigure(3, weight=0) # Role filter fixed size
+
+        ctk.CTkLabel(filter_controls_frame, text="🔎", font=("Segoe UI", 16)).grid(row=0, column=0, padx=(0,5), pady=5)
         self.user_search_var = ctk.StringVar()
-        user_search = ctk.CTkEntry(filter_frame, placeholder_text=get_translation("ctkentry_placeholder_text_search_users"),
-                                width=200, font=("Segoe UI", 13),
-                                textvariable=self.user_search_var)
-        user_search.pack(side="left", padx=5)
+        user_search_entry = ctk.CTkEntry(filter_controls_frame, placeholder_text=self._t("ctkentry_placeholder_text_search_users_by_name"),
+                                         textvariable=self.user_search_var, font=("Segoe UI", 13), height=35)
+        user_search_entry.grid(row=0, column=1, sticky="ew", padx=(0,15), pady=5)
 
-        # Role filter
-        self.role_filter_var = ctk.StringVar(value="All")
-        ctk.CTkLabel(filter_frame, text=get_translation("ctklabel_text_role"), font=("Segoe UI", 13)).pack(side="left", padx=(15, 5))
-        role_filter = ctk.CTkOptionMenu(filter_frame, values=["All", "Admin", "User"],
-                                    variable=self.role_filter_var,
-                                    width=100, font=("Segoe UI", 13))
-        role_filter.pack(side="left", padx=5)
+        ctk.CTkLabel(filter_controls_frame, text=self._t("ctklabel_text_role") + ":", font=("Segoe UI", 13)).grid(row=0, column=2, padx=(0,5), pady=5)
+        self.role_filter_var = ctk.StringVar(value=self._t("filter_all_roles")) # Default to "All"
+        role_filter_menu = ctk.CTkOptionMenu(filter_controls_frame,
+                                            values=[self._t("filter_all_roles"), self._t("role_admin"), self._t("role_user")],
+                                            variable=self.role_filter_var, font=("Segoe UI", 13), height=35)
+        role_filter_menu.grid(row=0, column=3, pady=5)
 
-        # Connect search and filter to refresh function
-        self.user_search_var.trace("w", lambda *args: self.refresh_user_list())
-        self.role_filter_var.trace("w", lambda *args: self.refresh_user_list())
+        self.user_search_var.trace_add("write", lambda *args: self.refresh_user_list())
+        self.role_filter_var.trace_add("write", lambda *args: self.refresh_user_list())
 
-        # User list in a scrollable frame with modern styling
-        user_list_frame = ctk.CTkScrollableFrame(user_mgmt_frame, height=350)
-        user_list_frame.pack(fill="both", expand=True, pady=10)
+        # User List (this frame is populated by refresh_user_list)
+        self.user_list_frame = ctk.CTkFrame(user_mgmt_scroll_frame, corner_radius=10) # This is the main container for cards
+        self.user_list_frame.pack(fill="both", expand=True, pady=10, padx=5)
+        # self.user_list_frame will have its own scrollbar if it becomes CTkScrollableFrame, or items make parent scroll
 
-        # Store reference to the frame for later updates
-        self.user_list_frame = user_list_frame
-
-        # Status bar at the bottom
-        self.user_status_label = ctk.CTkLabel(user_mgmt_frame, text=get_translation("ctklabel_text_empty_string"), font=("Segoe UI", 12))
-        self.user_status_label.pack(anchor="w", padx=10, pady=(5, 10))
-
-        # Populate the user list
+        self.user_status_label = ctk.CTkLabel(user_mgmt_scroll_frame, text="", font=("Segoe UI", 11), text_color="gray")
+        self.user_status_label.pack(anchor="e", padx=15, pady=(0,5))
         self.refresh_user_list()
 
+
         # =====================================================================
-        # Statistics Tab
+        # Statistics Tab Content
         # =====================================================================
-        stats_frame = ctk.CTkFrame(stats_tab)
-        stats_frame.pack(fill="both", expand=True, padx=20, pady=15)
+        stats_scroll_frame = ctk.CTkScrollableFrame(stats_tab, corner_radius=0, fg_color="transparent")
+        stats_scroll_frame.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
+        stats_scroll_frame.grid_columnconfigure(0, weight=1)
 
-        # Header with icon
-        header_frame = ctk.CTkFrame(stats_frame, fg_color="transparent")
-        header_frame.pack(fill="x", pady=(10, 20))
+        # Section: User Statistics
+        user_stats_section = ctk.CTkFrame(stats_scroll_frame, corner_radius=10)
+        user_stats_section.pack(fill="x", pady=(5,10), padx=5)
+        ctk.CTkLabel(user_stats_section, text=self._t("ctklabel_text_user_statistics"), font=("Segoe UI", 16, "bold")).pack(anchor="w", padx=15, pady=(10,5))
 
-        ctk.CTkLabel(header_frame, text=get_translation("ctklabel_text_empty_string"), font=("Segoe UI", 24)).pack(side="left", padx=(0, 10))
-        ctk.CTkLabel(header_frame, text=get_translation("ctklabel_text_system_statistics"),
-                    font=("Segoe UI", 20, "bold")).pack(side="left")
+        user_stats_grid = ctk.CTkFrame(user_stats_section, fg_color="transparent")
+        user_stats_grid.pack(fill="x", padx=15, pady=(5,15))
+        user_stats_grid.grid_columnconfigure(1, weight=1)
 
-        # Simple stats display
-        stats_info = ctk.CTkFrame(stats_frame)
-        stats_info.pack(fill="x", pady=10)
+        admin_count = sum(1 for user_data in users.values() if user_data["role"] == "admin")
+        regular_user_count = sum(1 for user_data in users.values() if user_data["role"] == "user")
+        total_user_count = len(users)
 
-        # Count users by role
-        admin_count = sum(1 for user in users.values() if user["role"] == "admin")
-        user_count = sum(1 for user in users.values() if user["role"] == "user")
+        ctk.CTkLabel(user_stats_grid, text=self._t("label_total_users") + ":", font=("Segoe UI", 14)).grid(row=0, column=0, sticky="w", pady=3)
+        ctk.CTkLabel(user_stats_grid, text=str(total_user_count), font=("Segoe UI", 14, "bold")).grid(row=0, column=1, sticky="w", padx=5, pady=3)
 
-        # User stats
-        user_stats_frame = ctk.CTkFrame(stats_info)
-        user_stats_frame.pack(fill="x", padx=15, pady=10)
+        ctk.CTkLabel(user_stats_grid, text=self._t("label_admin_users") + ":", font=("Segoe UI", 14)).grid(row=1, column=0, sticky="w", pady=3)
+        ctk.CTkLabel(user_stats_grid, text=str(admin_count), font=("Segoe UI", 14)).grid(row=1, column=1, sticky="w", padx=5, pady=3)
 
-        ctk.CTkLabel(user_stats_frame, text=get_translation("ctklabel_text_user_statistics"),
-                    font=("Segoe UI", 16, "bold")).pack(anchor="w", pady=(5, 10))
+        ctk.CTkLabel(user_stats_grid, text=self._t("label_regular_users") + ":", font=("Segoe UI", 14)).grid(row=2, column=0, sticky="w", pady=3)
+        ctk.CTkLabel(user_stats_grid, text=str(regular_user_count), font=("Segoe UI", 14)).grid(row=2, column=1, sticky="w", padx=5, pady=3)
 
-        ctk.CTkLabel(user_stats_frame, text=f"Total Users: {len(users)}",
-                    font=("Segoe UI", 14)).pack(anchor="w", padx=20, pady=2)
-        ctk.CTkLabel(user_stats_frame, text=f"Admin Users: {admin_count}",
-                    font=("Segoe UI", 14)).pack(anchor="w", padx=20, pady=2)
-        ctk.CTkLabel(user_stats_frame, text=f"Regular Users: {user_count}",
-                    font=("Segoe UI", 14)).pack(anchor="w", padx=20, pady=2)
+        # Section: Archive Statistics (Placeholder - actual calculation in open_dashboard)
+        archive_stats_section = ctk.CTkFrame(stats_scroll_frame, corner_radius=10)
+        archive_stats_section.pack(fill="x", pady=10, padx=5)
+        ctk.CTkLabel(archive_stats_section, text=self._t("ctklabel_text_archive_statistics"), font=("Segoe UI", 16, "bold")).pack(anchor="w", padx=15, pady=(10,5))
+
+        # This is just a placeholder text. Real stats are shown in the dashboard dialog.
+        # You could fetch and display some basic stats here if desired.
+        archive_placeholder_text = self._t("stats_archive_dashboard_prompt")
+        ctk.CTkLabel(archive_stats_section, text=archive_placeholder_text, font=("Segoe UI", 13), text_color="gray", wraplength=400).pack(padx=15, pady=(5,15), anchor="w")
+        ctk.CTkButton(archive_stats_section, text="📊 " + self._t("ctkbutton_text_open_admin_dashboard"),
+                                    command=self.open_dashboard, font=("Segoe UI", 13)).pack(padx=15, pady=(0,15), anchor="w")
+
 
     def refresh_user_list(self):
         """Refresh the user list display with search and filter"""
@@ -2030,319 +2237,206 @@ class FileArchiveApp:
     def add_user_dialog(self):
         """Show enhanced dialog to add a new user"""
         add_win = ctk.CTkToplevel(self.main_app)
-        add_win.transient(self.main_app) # Stay on top
-        add_win.title("Add New User")
+        add_win.transient(self.main_app)
+        add_win.title(self._t("dialog_title_add_user"))
         add_win.attributes("-topmost", True)
-        self.center_window(add_win, 650, 600)
+        # Adjusted size for better content fit
+        self.center_window(add_win, 480, 460)
         add_win.grab_set()
 
-        # Main frame with padding
-        main_frame = ctk.CTkFrame(add_win)
-        main_frame.pack(fill="both", expand=True, padx=20, pady=20)
+        dialog_main_frame = ctk.CTkFrame(add_win, fg_color="transparent")
+        dialog_main_frame.pack(fill="both", expand=True, padx=20, pady=20)
 
-        # Header with icon
-        header_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
-        header_frame.pack(fill="x", pady=(0, 20))
+        ctk.CTkLabel(dialog_main_frame, text="➕ " + self._t("ctklabel_text_add_new_user"),
+                    font=("Segoe UI", 20, "bold")).pack(pady=(0, 15))
 
-        ctk.CTkLabel(header_frame, text=get_translation("ctklabel_text_empty_string"), font=("Segoe UI", 28)).pack(side="left", padx=(0, 10))
-        ctk.CTkLabel(header_frame, text=get_translation("ctklabel_text_add_new_user"),
-                    font=("Segoe UI", 22, "bold")).pack(side="left")
+        # Username Input
+        ctk.CTkLabel(dialog_main_frame, text=self._t("ctklabel_text_username") + ":", font=("Segoe UI", 14)).pack(anchor="w", padx=5)
+        username_entry = ctk.CTkEntry(dialog_main_frame, placeholder_text=self._t("ctkentry_placeholder_text_enter_username"),
+                                    font=("Segoe UI", 14), height=35)
+        username_entry.pack(fill="x", padx=5, pady=(2,10))
 
-            # Form fields
-        form_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
-        form_frame.pack(fill="x", pady=10)
+        # Password Input
+        ctk.CTkLabel(dialog_main_frame, text=self._t("ctklabel_text_password") + ":", font=("Segoe UI", 14)).pack(anchor="w", padx=5)
+        password_entry = ctk.CTkEntry(dialog_main_frame, placeholder_text=self._t("ctkentry_placeholder_text_enter_password"),
+                                    show="•", font=("Segoe UI", 14), height=35)
+        password_entry.pack(fill="x", padx=5, pady=(2,5))
 
-        # Username field with icon
-        username_frame = ctk.CTkFrame(form_frame, fg_color="transparent")
-        username_frame.pack(fill="x", pady=10)
-
-        ctk.CTkLabel(username_frame, text=get_translation("ctklabel_text_empty_string"), font=("Segoe UI", 16)).pack(side="left", padx=(0, 10))
-        ctk.CTkLabel(username_frame, text=get_translation("ctklabel_text_username"),
-                    font=("Segoe UI", 14, "bold")).pack(side="left")
-
-        username_entry = ctk.CTkEntry(form_frame, placeholder_text=get_translation("ctkentry_placeholder_text_enter_username"),
-                                    width=400, height=35, font=("Segoe UI", 14))
-        username_entry.pack(pady=(0, 15))
-
-        # Password field with icon
-        password_frame = ctk.CTkFrame(form_frame, fg_color="transparent")
-        password_frame.pack(fill="x", pady=10)
-
-        ctk.CTkLabel(password_frame, text=get_translation("ctklabel_text_empty_string"), font=("Segoe UI", 16)).pack(side="left", padx=(0, 10))
-        ctk.CTkLabel(password_frame, text=get_translation("ctklabel_text_password"),
-                    font=("Segoe UI", 14, "bold")).pack(side="left")
-
-        password_entry = ctk.CTkEntry(form_frame, placeholder_text=get_translation("ctkentry_placeholder_text_enter_password"),
-                                    show="•", width=400, height=35, font=("Segoe UI", 14))
-        password_entry.pack(pady=(0, 15))
-
-        # Show/hide password toggle
         password_visible = False
-
         def toggle_password_visibility():
             nonlocal password_visible
             password_visible = not password_visible
             password_entry.configure(show="" if password_visible else "•")
-            toggle_btn.configure(text="👁️ Hide" if password_visible else "👁️ Show")
+            toggle_btn.configure(text="👁️ " + (self._t("button_hide") if password_visible else self._t("button_show")))
 
-        toggle_btn = ctk.CTkButton(form_frame, text=get_translation("ctkbutton_text_show"),
-                                command=toggle_password_visibility,
-                                font=("Segoe UI", 12),
-                                width=80, height=25,
-                                fg_color="#6c757d", hover_color="#5a6268")
-        toggle_btn.pack(anchor="e", padx=5)
+        toggle_btn = ctk.CTkButton(dialog_main_frame, text="👁️ " + self._t("button_show"),
+                                command=toggle_password_visibility, font=("Segoe UI", 11),
+                                width=70, height=25, fg_color="gray50", hover_color="gray40")
+        toggle_btn.pack(anchor="e", padx=5, pady=(0,10))
 
-        # Role selection with styled radio buttons
-        role_frame = ctk.CTkFrame(form_frame, fg_color="transparent")
-        role_frame.pack(fill="x", pady=15)
-
-        ctk.CTkLabel(role_frame, text=get_translation("ctklabel_text_empty_string"), font=("Segoe UI", 16)).pack(side="left", padx=(0, 10))
-        ctk.CTkLabel(role_frame, text=get_translation("ctklabel_text_user_role"),
-                    font=("Segoe UI", 14, "bold")).pack(side="left")
-
+        # Role Selection
+        ctk.CTkLabel(dialog_main_frame, text=self._t("ctklabel_text_user_role") + ":", font=("Segoe UI", 14)).pack(anchor="w", padx=5, pady=(5,2))
         role_var = ctk.StringVar(value="user")
+        role_radio_frame = ctk.CTkFrame(dialog_main_frame, fg_color="transparent")
+        role_radio_frame.pack(fill="x", padx=5, pady=(0,15))
 
-        role_options = ctk.CTkFrame(form_frame, fg_color="transparent")
-        role_options.pack(fill="x", pady=(0, 15))
+        admin_radio = ctk.CTkRadioButton(role_radio_frame, text=self._t("role_admin_display"),
+                                        variable=role_var, value="admin", font=("Segoe UI", 13),
+                                        border_width_checked=5, fg_color="#2D7FF9")
+        admin_radio.pack(side="left", padx=(0,15))
 
-        # Admin radio with custom styling
-        admin_frame = ctk.CTkFrame(role_options, fg_color="#f8f9fa", corner_radius=6)
-        admin_frame.pack(side="left", fill="x", expand=True, padx=(0, 5))
+        user_radio = ctk.CTkRadioButton(role_radio_frame, text=self._t("role_user_display"),
+                                        variable=role_var, value="user", font=("Segoe UI", 13),
+                                        border_width_checked=5, fg_color="#28a745")
+        user_radio.pack(side="left")
 
-        admin_radio = ctk.CTkRadioButton(admin_frame, text=get_translation("ctkradiobutton_text_admin"),
-                                        variable=role_var, value="admin",
-                                        font=("Segoe UI", 14),
-                                        border_width_checked=6,
-                                        fg_color="#2D7FF9",
-                                        hover_color="#1A6CD6")
-        admin_radio.pack(side="left", padx=15, pady=10)
+        # Action Buttons
+        buttons_frame = ctk.CTkFrame(dialog_main_frame, fg_color="transparent")
+        buttons_frame.pack(fill="x", pady=(15,0)) # pady from top
+        buttons_frame.grid_columnconfigure((0,1), weight=1)
 
-        ctk.CTkLabel(admin_frame, text=get_translation("ctklabel_text_full_system_access"),
-                    font=("Segoe UI", 12),
-                    text_color="#6c757d").pack(side="left", padx=5)
 
-        # User radio with custom styling
-        user_frame = ctk.CTkFrame(role_options, fg_color="#f8f9fa", corner_radius=6)
-        user_frame.pack(side="left", fill="x", expand=True, padx=(5, 0))
-
-        user_radio = ctk.CTkRadioButton(user_frame, text=get_translation("ctkradiobutton_text_user"),
-                                        variable=role_var, value="user",
-                                        font=("Segoe UI", 14),
-                                        border_width_checked=6,
-                                        fg_color="#28a745",
-                                        hover_color="#218838")
-        user_radio.pack(side="left", padx=15, pady=10)
-
-        ctk.CTkLabel(user_frame, text=get_translation("ctklabel_text_limited_access"),
-                    font=("Segoe UI", 12),
-                    text_color="#6c757d").pack(side="left", padx=5)
-
-        # Buttons frame
-        buttons_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
-        buttons_frame.pack(fill="x", pady=(20, 0))
-
-        # Cancel button
-        cancel_btn = ctk.CTkButton(buttons_frame, text=get_translation("ctkbutton_text_cancel"),
-                                command=add_win.destroy,
-                                font=("Segoe UI", 14),
-                                width=120, height=40,
-                                fg_color="#6c757d", hover_color="#5a6268")
-        cancel_btn.pack(side="left", padx=(0, 10))
+        cancel_btn = ctk.CTkButton(buttons_frame, text=self._t("ctkbutton_text_cancel"),
+                                command=add_win.destroy, font=("Segoe UI", 14), height=40,
+                                fg_color="gray50", hover_color="gray40")
+        cancel_btn.grid(row=0, column=0, padx=(0,5), sticky="ew")
 
         def do_add_user():
             username = username_entry.get().strip()
             password = password_entry.get().strip()
             role = role_var.get()
 
-            # Validate inputs
             if not username or not password:
-                messagebox.showerror("Error", "Username and password are required", parent=add_win)
+                messagebox.showerror(self._t("error_title"), self._t("error_all_fields_required"), parent=add_win)
                 return
-
             if username in users:
-                messagebox.showerror("Error", f"User '{username}' already exists", parent=add_win)
+                messagebox.showerror(self._t("error_title"), self._t("error_user_exists").format(username=username), parent=add_win)
                 return
 
-            # Add the new user
-            users[username] = {
-                "password": pbkdf2_sha256.hash(password),
-                "role": role
-            }
-
-            # Save changes to file
-            self.save_user_to_db(username, pbkdf2_sha256.hash(password), role)
-
-            messagebox.showinfo("Success", f"User '{username}' added successfully", parent=add_win)
+            users[username] = {"password": pbkdf2_sha256.hash(password), "role": role}
+            self.save_user_to_db(username, users[username]["password"], role)
+            messagebox.showinfo(self._t("success_title"), self._t("success_user_added").format(username=username), parent=add_win)
             logging.info(f"Admin '{self.current_user['username']}' added new user '{username}' with role '{role}'")
-
-            # Refresh the user list
             self.refresh_user_list()
             add_win.destroy()
 
-        # Add button
-        add_btn = ctk.CTkButton(buttons_frame, text=get_translation("ctkbutton_text_add_user"),
-                            command=do_add_user,
-                            font=("Segoe UI", 14, "bold"),
-                            width=300, height=40,
-                            corner_radius=8,
+        add_confirm_btn = ctk.CTkButton(buttons_frame, text="✔️ " + self._t("ctkbutton_text_add_user"),
+                            command=do_add_user, font=("Segoe UI", 14, "bold"), height=40,
                             fg_color="#28a745", hover_color="#218838")
-        add_btn.pack(side="right")
+        add_confirm_btn.grid(row=0, column=1, padx=(5,0), sticky="ew")
 
-        # Set focus to username entry
         username_entry.focus_set()
+        add_win.bind("<Return>", lambda event: do_add_user())
+
 
     def edit_user_dialog(self, username):
         """Show enhanced dialog to edit an existing user"""
         edit_win = ctk.CTkToplevel(self.main_app)
-        edit_win.transient(self.main_app) # Stay on top
-        edit_win.title(f"Edit User: {username}")
+        edit_win.transient(self.main_app)
+        edit_win.title(self._t("dialog_title_edit_user").format(username=username))
         edit_win.attributes("-topmost", True)
-        self.center_window(edit_win, 650, 600)
+        self.center_window(edit_win, 480, 480) # Adjusted size
         edit_win.grab_set()
 
-        # Main frame with padding
-        main_frame = ctk.CTkFrame(edit_win)
-        main_frame.pack(fill="both", expand=True, padx=20, pady=20)
+        dialog_main_frame = ctk.CTkFrame(edit_win, fg_color="transparent")
+        dialog_main_frame.pack(fill="both", expand=True, padx=20, pady=20)
 
-        # Header with icon and username
-        header_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
-        header_frame.pack(fill="x", pady=(0, 20))
+        ctk.CTkLabel(dialog_main_frame, text="✏️ " + self._t("ctklabel_text_edit_user_for").format(username=username),
+                    font=("Segoe UI", 20, "bold")).pack(pady=(0,10))
 
-        ctk.CTkLabel(header_frame, text=get_translation("ctklabel_text_empty_string"), font=("Segoe UI", 28)).pack(side="left", padx=(0, 10))
-        ctk.CTkLabel(header_frame, text=f"Edit User",
-                    font=("Segoe UI", 22, "bold")).pack(side="left")
+        # Display Username (read-only)
+        ctk.CTkLabel(dialog_main_frame, text=self._t("ctklabel_text_username") + ":", font=("Segoe UI", 14)).pack(anchor="w", padx=5, pady=(10,0))
+        username_display_label = ctk.CTkLabel(dialog_main_frame, text=username, font=("Segoe UI", 14, "bold"), fg_color=("gray85", "gray18"), corner_radius=6, height=35)
+        username_display_label.pack(fill="x", padx=5, pady=(2,10))
 
-        # Username display
-        username_frame = ctk.CTkFrame(main_frame, fg_color="#f8f9fa", corner_radius=6)
-        username_frame.pack(fill="x", pady=10)
 
-        ctk.CTkLabel(username_frame, text=get_translation("ctklabel_text_empty_string"), font=("Segoe UI", 16)).pack(side="left", padx=10)
-        ctk.CTkLabel(username_frame, text=username,
-                    font=("Segoe UI", 16, "bold")).pack(side="left", padx=5, pady=10)
+        # New Password Input
+        ctk.CTkLabel(dialog_main_frame, text=self._t("ctklabel_text_new_password") + f" ({self._t('optional_field')}):", font=("Segoe UI", 14)).pack(anchor="w", padx=5)
+        password_entry = ctk.CTkEntry(dialog_main_frame, placeholder_text=self._t("ctkentry_placeholder_text_leave_blank_to_keep_current_password"),
+                                    show="•", font=("Segoe UI", 14), height=35)
+        password_entry.pack(fill="x", padx=5, pady=(2,0))
+        ctk.CTkLabel(dialog_main_frame, text=self._t("ctklabel_text_note_password_will_only_be_updated_if_a_new_one_is"),
+                    font=("Segoe UI", 11), text_color="gray").pack(anchor="w", padx=5, pady=(0,5))
 
-        # Rest of the function remains the same...
-        # Form fields
-        form_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
-        form_frame.pack(fill="x", pady=10)
-
-        # Password field with icon
-        password_frame = ctk.CTkFrame(form_frame, fg_color="transparent")
-        password_frame.pack(fill="x", pady=10)
-
-        ctk.CTkLabel(password_frame, text=get_translation("ctklabel_text_empty_string"), font=("Segoe UI", 16)).pack(side="left", padx=(0, 10))
-        ctk.CTkLabel(password_frame, text=get_translation("ctklabel_text_new_password"),
-                    font=("Segoe UI", 14, "bold")).pack(side="left")
-
-        password_entry = ctk.CTkEntry(form_frame, placeholder_text=get_translation("ctkentry_placeholder_text_leave_blank_to_keep_current_password"),
-                                    show="•", width=400, height=35, font=("Segoe UI", 14))
-        password_entry.pack(pady=(0, 5))
-
-        ctk.CTkLabel(form_frame, text=get_translation("ctklabel_text_note_password_will_only_be_updated_if_a_new_one_is"),
-                    font=("Segoe UI", 12),
-                    text_color="#6c757d").pack(anchor="w", pady=(0, 15))
-
-        # Show/hide password toggle
         password_visible = False
-
         def toggle_password_visibility():
             nonlocal password_visible
             password_visible = not password_visible
             password_entry.configure(show="" if password_visible else "•")
-            toggle_btn.configure(text="👁️ Hide" if password_visible else "👁️ Show")
+            toggle_btn.configure(text="👁️ " + (self._t("button_hide") if password_visible else self._t("button_show")))
 
-        toggle_btn = ctk.CTkButton(form_frame, text=get_translation("ctkbutton_text_show"),
-                                command=toggle_password_visibility,
-                                font=("Segoe UI", 12),
-                                width=80, height=25,
-                                fg_color="#6c757d", hover_color="#5a6268")
-        toggle_btn.pack(anchor="e", padx=5)
+        toggle_btn = ctk.CTkButton(dialog_main_frame, text="👁️ " + self._t("button_show"),
+                                command=toggle_password_visibility, font=("Segoe UI", 11),
+                                width=70, height=25, fg_color="gray50", hover_color="gray40")
+        toggle_btn.pack(anchor="e", padx=5, pady=(0,10))
 
-        # Role selection with styled radio buttons
+
+        # Role Selection
         current_role = users[username]["role"]
-        role_frame = ctk.CTkFrame(form_frame, fg_color="transparent")
-        role_frame.pack(fill="x", pady=15)
-
-        ctk.CTkLabel(role_frame, text=get_translation("ctklabel_text_empty_string"), font=("Segoe UI", 16)).pack(side="left", padx=(0, 10))
-        ctk.CTkLabel(role_frame, text=get_translation("ctklabel_text_user_role"),
-                    font=("Segoe UI", 14, "bold")).pack(side="left")
-
+        ctk.CTkLabel(dialog_main_frame, text=self._t("ctklabel_text_user_role") + ":", font=("Segoe UI", 14)).pack(anchor="w", padx=5, pady=(5,2))
         role_var = ctk.StringVar(value=current_role)
+        role_radio_frame = ctk.CTkFrame(dialog_main_frame, fg_color="transparent")
+        role_radio_frame.pack(fill="x", padx=5, pady=(0,15))
 
-        role_options = ctk.CTkFrame(form_frame, fg_color="transparent")
-        role_options.pack(fill="x", pady=(0, 15))
+        admin_radio = ctk.CTkRadioButton(role_radio_frame, text=self._t("role_admin_display"),
+                                        variable=role_var, value="admin", font=("Segoe UI", 13),
+                                        border_width_checked=5, fg_color="#2D7FF9")
+        admin_radio.pack(side="left", padx=(0,15))
 
-        # Admin radio with custom styling
-        admin_frame = ctk.CTkFrame(role_options, fg_color="#f8f9fa", corner_radius=6)
-        admin_frame.pack(side="left", fill="x", expand=True, padx=(0, 5))
+        user_radio = ctk.CTkRadioButton(role_radio_frame, text=self._t("role_user_display"),
+                                        variable=role_var, value="user", font=("Segoe UI", 13),
+                                        border_width_checked=5, fg_color="#28a745")
+        user_radio.pack(side="left")
 
-        admin_radio = ctk.CTkRadioButton(admin_frame, text=get_translation("ctkradiobutton_text_admin"),
-                                        variable=role_var, value="admin",
-                                        font=("Segoe UI", 14),
-                                        border_width_checked=6,
-                                        fg_color="#2D7FF9",
-                                        hover_color="#1A6CD6")
-        admin_radio.pack(side="left", padx=15, pady=10)
+        # Disable role change for the current admin user editing themselves
+        if self.current_user and username == self.current_user["username"] and current_role == "admin":
+            admin_radio.configure(state="disabled")
+            user_radio.configure(state="disabled")
+            ctk.CTkLabel(dialog_main_frame, text=self._t("info_admin_cannot_change_own_role"),
+                         font=("Segoe UI", 11), text_color="orange").pack(anchor="w", padx=5, pady=(0,5))
 
-        ctk.CTkLabel(admin_frame, text=get_translation("ctklabel_text_full_system_access"),
-                    font=("Segoe UI", 12),
-                    text_color="#6c757d").pack(side="left", padx=5)
 
-        # User radio with custom styling
-        user_frame = ctk.CTkFrame(role_options, fg_color="#f8f9fa", corner_radius=6)
-        user_frame.pack(side="left", fill="x", expand=True, padx=(5, 0))
+        # Action Buttons
+        buttons_frame = ctk.CTkFrame(dialog_main_frame, fg_color="transparent")
+        buttons_frame.pack(fill="x", pady=(15,0))
+        buttons_frame.grid_columnconfigure((0,1), weight=1)
 
-        user_radio = ctk.CTkRadioButton(user_frame, text=get_translation("ctkradiobutton_text_user"),
-                                        variable=role_var, value="user",
-                                        font=("Segoe UI", 14),
-                                        border_width_checked=6,
-                                        fg_color="#28a745",
-                                        hover_color="#218838")
-        user_radio.pack(side="left", padx=15, pady=10)
+        cancel_btn = ctk.CTkButton(buttons_frame, text=self._t("ctkbutton_text_cancel"),
+                                command=edit_win.destroy, font=("Segoe UI", 14), height=40,
+                                fg_color="gray50", hover_color="gray40")
+        cancel_btn.grid(row=0, column=0, padx=(0,5), sticky="ew")
 
-        ctk.CTkLabel(user_frame, text=get_translation("ctklabel_text_limited_access"),
-                    font=("Segoe UI", 12),
-                    text_color="#6c757d").pack(side="left", padx=5)
-
-        # Buttons frame
-        buttons_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
-        buttons_frame.pack(fill="x", pady=(20, 0))
-
-        # Cancel button
-        cancel_btn = ctk.CTkButton(buttons_frame, text=get_translation("ctkbutton_text_cancel"),
-                                command=edit_win.destroy,
-                                font=("Segoe UI", 14),
-                                width=120, height=40,
-                                fg_color="#6c757d", hover_color="#5a6268")
-        cancel_btn.pack(side="left", padx=(0, 10))
-
-        # Inside edit_user_dialog, modify the do_edit_user function:
         def do_edit_user():
             new_password = password_entry.get().strip()
             new_role = role_var.get()
 
-            # Update user details if a new password was entered
+            password_changed = False
             if new_password:
                 users[username]["password"] = pbkdf2_sha256.hash(new_password)
+                password_changed = True
+
+            role_changed = (users[username]["role"] != new_role)
             users[username]["role"] = new_role
 
-            # Use the updated password hash when saving
-            effective_password = users[username]["password"]
-            self.save_user_to_db(username, effective_password, new_role)
+            # Save to DB (even if only role changed, password hash remains the same if not updated)
+            self.save_user_to_db(username, users[username]["password"], new_role)
 
-            messagebox.showinfo("Success", f"User '{username}' updated successfully", parent=edit_win)
-            logging.info(f"Admin '{self.current_user['username']}' updated user '{username}'")
+            log_message = f"Admin '{self.current_user['username']}' updated user '{username}'."
+            if password_changed: log_message += " Password changed."
+            if role_changed: log_message += f" Role changed to '{new_role}'."
+
+            messagebox.showinfo(self._t("success_title"), self._t("success_user_updated").format(username=username), parent=edit_win)
+            logging.info(log_message)
             self.refresh_user_list()
             edit_win.destroy()
 
+        update_confirm_btn = ctk.CTkButton(buttons_frame, text="💾 " + self._t("ctkbutton_text_update_user"),
+                                command=do_edit_user, font=("Segoe UI", 14, "bold"), height=40,
+                                fg_color="#007bff", hover_color="#0069d9") # Blue for update
+        update_confirm_btn.grid(row=0, column=1, padx=(5,0), sticky="ew")
 
-        # Update button
-        update_btn = ctk.CTkButton(buttons_frame, text=get_translation("ctkbutton_text_update_user"),
-                                command=do_edit_user,
-                                font=("Segoe UI", 14, "bold"),
-                                width=300, height=40,
-                                corner_radius=8,
-                                fg_color="#007bff", hover_color="#0069d9")
-        update_btn.pack(side="right")
+        edit_win.bind("<Return>", lambda event: do_edit_user())
+
 
     def delete_user_confirm(self, username):
         """Show enhanced confirmation dialog to delete a user"""
@@ -2354,62 +2448,53 @@ class FileArchiveApp:
             # Create a custom confirmation dialog
                 # Create a custom confirmation dialog
         confirm_win = ctk.CTkToplevel(self.main_app)
-        confirm_win.transient(self.main_app) # Stay on top
-        confirm_win.title("Confirm Delete")
+        confirm_win.transient(self.main_app)
+        confirm_win.title(self._t("dialog_title_confirm_delete"))
         confirm_win.attributes("-topmost", True)
-        self.center_window(confirm_win, 400, 250)
+        # Slightly wider for better text layout, taller for icon and buttons
+        self.center_window(confirm_win, 420, 280)
         confirm_win.grab_set()
 
-        # Main frame with padding
-        main_frame = ctk.CTkFrame(confirm_win)
-        main_frame.pack(fill="both", expand=True, padx=20, pady=20)
+        dialog_main_frame = ctk.CTkFrame(confirm_win, fg_color="transparent")
+        dialog_main_frame.pack(fill="both", expand=True, padx=20, pady=20)
 
-        # Warning icon
-        ctk.CTkLabel(main_frame, text=get_translation("ctklabel_text_empty_string"), font=("Segoe UI", 48)).pack(pady=(10, 5))
+        # Warning Icon (Emoji)
+        ctk.CTkLabel(dialog_main_frame, text="⚠️", font=("Segoe UI Emoji", 48)).pack(pady=(0,10)) # Segoe UI Emoji for better icon rendering
 
-        # Warning message
-        ctk.CTkLabel(main_frame, text=get_translation("ctklabel_text_delete_user"),
-                    font=("Segoe UI", 20, "bold")).pack(pady=(0, 10))
+        ctk.CTkLabel(dialog_main_frame, text=self._t("ctklabel_text_delete_user_confirmation_q").format(username=username),
+                    font=("Segoe UI", 18, "bold"), wraplength=380, justify="center").pack(pady=(0,10))
 
-        message = f"Are you sure you want to delete user '{username}'?\nThis action cannot be undone."
-        ctk.CTkLabel(main_frame, text=message,
-                    font=("Segoe UI", 14),
-                    justify="center").pack(pady=(0, 20))
+        ctk.CTkLabel(dialog_main_frame, text=self._t("ctklabel_text_action_cannot_be_undone"),
+                    font=("Segoe UI", 13), text_color="gray", justify="center").pack(pady=(0,20))
 
-        # Buttons frame
-        buttons_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
-        buttons_frame.pack(fill="x", pady=(10, 0))
+        buttons_frame = ctk.CTkFrame(dialog_main_frame, fg_color="transparent")
+        buttons_frame.pack(fill="x", pady=(10,0))
+        buttons_frame.grid_columnconfigure((0,1), weight=1) # Make buttons expand
 
-        # Cancel button
-        cancel_btn = ctk.CTkButton(buttons_frame, text=get_translation("ctkbutton_text_cancel"),
-                                command=confirm_win.destroy,
-                                font=("Segoe UI", 14),
-                                width=180, height=40,
-                                fg_color="#6c757d", hover_color="#5a6268")
-        cancel_btn.pack(side="left")
+        cancel_btn = ctk.CTkButton(buttons_frame, text=self._t("ctkbutton_text_cancel"),
+                                command=confirm_win.destroy, font=("Segoe UI", 14), height=40,
+                                fg_color="gray50", hover_color="gray40")
+        cancel_btn.grid(row=0, column=0, padx=(0,5), sticky="ew")
 
         def do_delete_user():
             if username in users:
                 del users[username]
-                # Remove user from the database
                 self.cursor.execute("DELETE FROM users WHERE username=?", (username,))
                 self.conn.commit()
-                messagebox.showinfo("Success", f"User '{username}' deleted successfully", parent=confirm_win)
+                messagebox.showinfo(self._t("success_title"), self._t("success_user_deleted").format(username=username), parent=confirm_win) # Changed parent to confirm_win
                 logging.info(f"Admin '{self.current_user['username']}' deleted user '{username}'")
-                # Refresh the user list
                 self.refresh_user_list()
                 confirm_win.destroy()
             else:
-                messagebox.showerror("Error", f"User '{username}' not found.", parent=confirm_win)
+                messagebox.showerror(self._t("error_title"), self._t("error_user_not_found").format(username=username), parent=confirm_win) # Changed parent
 
-        # Delete button
-        delete_btn = ctk.CTkButton(buttons_frame, text=get_translation("ctkbutton_text_delete_user"),
-                                command=do_delete_user,
-                                font=("Segoe UI", 14, "bold"),
-                                width=180, height=40,
-                                corner_radius=8,
-                                fg_color="#dc3545", hover_color="#c82333")
-        delete_btn.pack(side="right")
+        delete_confirm_btn = ctk.CTkButton(buttons_frame, text="🗑️ " + self._t("ctkbutton_text_confirm_delete"),
+                                command=do_delete_user, font=("Segoe UI", 14, "bold"), height=40,
+                                fg_color="#dc3545", hover_color="#c82333") # Red for delete
+        delete_confirm_btn.grid(row=0, column=1, padx=(5,0), sticky="ew")
+
+        confirm_win.bind("<Return>", lambda event: do_delete_user()) # Bind Enter to confirm delete
+        confirm_win.bind("<Escape>", lambda event: confirm_win.destroy()) # Bind Escape to cancel
     def ensure_admin_user_db(self):
         global users
         self.cursor.execute("SELECT COUNT(*) FROM users WHERE role = 'admin'")
@@ -2465,118 +2550,84 @@ class FileArchiveApp:
         settings_scroll.pack(fill="both", expand=True, padx=10, pady=10)
         settings_scroll.columnconfigure(0, weight=1)
 
-        # Appearance Frame with better styling
-        appearance_frame = ctk.CTkFrame(settings_scroll, corner_radius=8)
-        appearance_frame.pack(fill="x", padx=10, pady=(10, 15))
+        # --- Section 1: Appearance Settings ---
+        appearance_section_frame = ctk.CTkFrame(settings_scroll, corner_radius=10)
+        appearance_section_frame.pack(fill="x", padx=5, pady=(5,10), anchor="n")
 
-        # Header with icon
-        app_header_frame = ctk.CTkFrame(appearance_frame, fg_color="transparent")
-        app_header_frame.pack(fill="x", padx=15, pady=(10, 5))
-
-        ctk.CTkLabel(app_header_frame, text=get_translation("ctklabel_text_empty_string"), font=("Segoe UI", 20)).pack(side="left", padx=(0, 10))
-        ctk.CTkLabel(app_header_frame, text=get_translation("ctklabel_text_appearance"),
+        appearance_header = ctk.CTkFrame(appearance_section_frame, fg_color="transparent")
+        appearance_header.pack(fill="x", padx=15, pady=(10,5))
+        ctk.CTkLabel(appearance_header, text="🎨 " + self._t("ctklabel_text_appearance"), # Added icon
                     font=("Segoe UI", 18, "bold")).pack(side="left")
 
+        theme_options_frame = ctk.CTkFrame(appearance_section_frame, fg_color="transparent")
+        theme_options_frame.pack(fill="x", padx=15, pady=(10,15))
 
-        # Theme switcher with improved layout
-        theme_frame = ctk.CTkFrame(appearance_frame, fg_color="transparent")
-        theme_frame.pack(fill="x", padx=15, pady=15)
+        ctk.CTkLabel(theme_options_frame, text=self._t("ctklabel_text_select_theme_mode") + ":",
+                    font=("Segoe UI", 14)).pack(anchor="w", pady=(0, 8))
 
-        ctk.CTkLabel(theme_frame, text=get_translation("ctklabel_text_select_theme_mode"),
-                    font=("Segoe UI", 14)).pack(anchor="w", pady=(0, 10))
+        theme_radio_group = ctk.CTkFrame(theme_options_frame, fg_color="transparent")
+        theme_radio_group.pack(fill="x")
 
-        # Radio button group for theme selection
-        theme_selection = ctk.CTkFrame(theme_frame, fg_color="transparent")
-        theme_selection.pack(fill="x")
-
-        theme_var = ctk.StringVar(value="Dark" if ctk.get_appearance_mode() == "Dark" else "Light")
+        current_theme = ctk.get_appearance_mode()
+        theme_var = ctk.StringVar(value=current_theme)
 
         def change_theme_mode(choice):
-            ctk.set_appearance_mode(choice.lower())
-            # Update the status bar notification
-            self.notification_label.configure(text=f"Theme changed to {choice} mode")
+            ctk.set_appearance_mode(choice) # CTk expects "Light", "Dark", or "System"
+            self.notification_label.configure(text=f"{self._t('notify_theme_changed_to')} {self._t('theme_' + choice.lower())}")
+            logging.info(f"Theme changed to {choice}")
 
-        # Create radio buttons for theme options
-        themes = ["Dark", "Light", "System"]
-        theme_radios = []
+        themes = ["Light", "Dark", "System"] # Correct values for set_appearance_mode
+        for i, theme_name in enumerate(themes):
+            # Use translated names for display if available, otherwise use the theme_name
+            display_name = self._t(f"theme_{theme_name.lower()}") # e.g., theme_light, theme_dark
+            radio = ctk.CTkRadioButton(theme_radio_group, text=display_name, variable=theme_var,
+                                    value=theme_name, # Value must match what CTk expects
+                                    command=lambda t=theme_name: change_theme_mode(t),
+                                    font=("Segoe UI", 13), height=30, border_width_checked=6)
+            radio.pack(side="left", padx=(0 if i == 0 else 20), pady=5)
 
-        for i, theme in enumerate(themes):
-            radio = ctk.CTkRadioButton(theme_selection, text=theme, variable=theme_var,
-                                    value=theme, command=lambda t=theme: change_theme_mode(t),
-                                    font=("Segoe UI", 14))
-            radio.pack(side="left", padx=(0 if i == 0 else 20))
-            theme_radios.append(radio)
+        shortcut_info_frame = ctk.CTkFrame(appearance_section_frame, fg_color="transparent")
+        shortcut_info_frame.pack(fill="x", padx=15, pady=(0,10))
+        ctk.CTkLabel(shortcut_info_frame, text=self._t("ctklabel_text_tip_press_ctrlt_to_quickly_toggle_between_dark_and"),
+                    font=("Segoe UI", 11, "italic"), text_color="gray").pack(anchor="w")
 
-        # Add keyboard shortcut info
-        shortcut_frame = ctk.CTkFrame(theme_frame, fg_color="transparent")
-        shortcut_frame.pack(fill="x", pady=(10, 0))
 
-        ctk.CTkLabel(shortcut_frame, text=get_translation("ctklabel_text_tip_press_ctrlt_to_quickly_toggle_between_dark_and"),
-                    font=("Segoe UI", 12, "italic")).pack(anchor="w")
-
-        # User Settings Frame
+        # --- Section 2: User Settings (Admin Only) ---
         if self.current_user and self.current_user["role"] == "admin":
-            user_frame = ctk.CTkFrame(settings_scroll, corner_radius=8)
-            user_frame.pack(fill="x", padx=10, pady=15)
+            user_settings_section_frame = ctk.CTkFrame(settings_scroll, corner_radius=10)
+            user_settings_section_frame.pack(fill="x", padx=5, pady=10, anchor="n")
 
-            # Header with icon for user settings
-            user_header_frame = ctk.CTkFrame(user_frame, fg_color="transparent")
-            user_header_frame.pack(fill="x", padx=15, pady=(10, 5))
-
-            ctk.CTkLabel(user_header_frame, text=get_translation("ctklabel_text_empty_string"), font=("Segoe UI", 20)).pack(side="left", padx=(0, 10))
-            ctk.CTkLabel(user_header_frame, text=get_translation("ctklabel_text_user_settings"),
+            user_settings_header = ctk.CTkFrame(user_settings_section_frame, fg_color="transparent")
+            user_settings_header.pack(fill="x", padx=15, pady=(10,5))
+            ctk.CTkLabel(user_settings_header, text="👤 " + self._t("ctklabel_text_user_settings"), # Added icon
                         font=("Segoe UI", 18, "bold")).pack(side="left")
-        
-            # User info card with shadow effect (simulated with nested frames)
-            card_outer = ctk.CTkFrame(user_frame, fg_color=["#D3D3D3", "#2B2B2B"])
-            card_outer.pack(fill="x", padx=15, pady=15)
 
-            info_card = ctk.CTkFrame(card_outer)
-            info_card.pack(fill="x", padx=2, pady=2)
+            # User Info Display Area (less like a card, more integrated)
+            user_info_area = ctk.CTkFrame(user_settings_section_frame, fg_color="transparent")
+            user_info_area.pack(fill="x", padx=15, pady=(10,15))
 
-            # Show user info with icons
-            info_frame = ctk.CTkFrame(info_card, fg_color="transparent")
-            info_frame.pack(fill="x", padx=15, pady=10)
+            info_grid = ctk.CTkFrame(user_info_area, fg_color="transparent")
+            info_grid.pack(fill="x")
+            info_grid.grid_columnconfigure(1, weight=1)
 
-            # Username row
-            username_frame = ctk.CTkFrame(info_frame, fg_color="transparent")
-            username_frame.pack(fill="x", pady=5, anchor="w")
+            # Username
+            ctk.CTkLabel(info_grid, text=self._t("label_username") + ":", font=("Segoe UI", 14)).grid(row=0, column=0, sticky="w", pady=3)
+            ctk.CTkLabel(info_grid, text=self.current_user['username'], font=("Segoe UI", 14, "bold")).grid(row=0, column=1, sticky="w", pady=3, padx=5)
 
-            ctk.CTkLabel(username_frame, text=get_translation("ctklabel_text_empty_string"), font=("Segoe UI", 16)).pack(side="left", padx=(0, 10))
-            ctk.CTkLabel(username_frame, text=f"Username: {self.current_user['username']}",
-                        font=("Segoe UI", 14, "bold")).pack(side="left")
+            # Role
+            ctk.CTkLabel(info_grid, text=self._t("label_role") + ":", font=("Segoe UI", 14)).grid(row=1, column=0, sticky="w", pady=3)
+            ctk.CTkLabel(info_grid, text=self._t('role_' + self.current_user['role'].lower()), font=("Segoe UI", 14)).grid(row=1, column=1, sticky="w", pady=3, padx=5)
 
-            # Role row
-            role_frame = ctk.CTkFrame(info_frame, fg_color="transparent")
-            role_frame.pack(fill="x", pady=5, anchor="w")
+            # Last Login (Placeholder)
+            ctk.CTkLabel(info_grid, text=self._t("label_last_login") + ":", font=("Segoe UI", 14)).grid(row=2, column=0, sticky="w", pady=3)
+            ctk.CTkLabel(info_grid, text=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), # This is just current time
+                        font=("Segoe UI", 14), text_color="gray").grid(row=2, column=1, sticky="w", pady=3, padx=5)
 
-            # Icon based on role
-            role_icon = "👑" if self.current_user["role"] == "admin" else "🧑"
-            ctk.CTkLabel(role_frame, text=role_icon, font=("Segoe UI", 16)).pack(side="left", padx=(0, 10))
-            ctk.CTkLabel(role_frame, text=f"Role: {self.current_user['role'].capitalize()}",
-                        font=("Segoe UI", 14)).pack(side="left")
-
-            # Add last login time (placeholder - in a real app this would be stored)
-            login_frame = ctk.CTkFrame(info_frame, fg_color="transparent")
-            login_frame.pack(fill="x", pady=5, anchor="w")
-
-            ctk.CTkLabel(login_frame, text=get_translation("ctklabel_text_empty_string"), font=("Segoe UI", 16)).pack(side="left", padx=(0, 10))
-            ctk.CTkLabel(login_frame, text=f"Last login: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
-                        font=("Segoe UI", 14)).pack(side="left")
-
-            # Account management options
-            action_frame = ctk.CTkFrame(user_frame, fg_color="transparent")
-            action_frame.pack(fill="x", padx=15, pady=(0, 15))
-
-            # Change password button with icon
-            pwd_button_frame = ctk.CTkFrame(action_frame, fg_color="transparent")
-            pwd_button_frame.pack(fill="x", pady=5)
-
-            change_pwd_btn = ctk.CTkButton(pwd_button_frame, text=get_translation("ctkbutton_text_change_password"),
+            # Change Password Button
+            change_pwd_btn = ctk.CTkButton(user_settings_section_frame, text="🔑 " + self._t("ctkbutton_text_change_password"), # Added icon
                                         command=self.change_password,
-                                        font=("Segoe UI", 14),
-                                        width=200)
-            change_pwd_btn.pack(side="left")
+                                        font=("Segoe UI", 14), height=40)
+            change_pwd_btn.pack(fill="x", padx=15, pady=(5,15))
     def setup_manage_tab(self):
         """Configure the manage tab with file management functionality"""
         # Add a scrollable container
@@ -2584,100 +2635,70 @@ class FileArchiveApp:
         manage_scroll.pack(fill="both", expand=True, padx=10, pady=10)
         manage_scroll.grid_columnconfigure(0, weight=1)
 
-        # File Operations Frame with improved styling
-        operations_frame = ctk.CTkFrame(manage_scroll, corner_radius=8)
-        operations_frame.pack(fill="x", padx=10, pady=(10, 15))
+        # --- Section 1: File Operations ---
+        operations_section_frame = ctk.CTkFrame(manage_scroll, corner_radius=10)
+        operations_section_frame.pack(fill="x", padx=5, pady=(5,10), anchor="n")
 
-        # Header with icon
-        op_header_frame = ctk.CTkFrame(operations_frame, fg_color="transparent")
-        op_header_frame.pack(fill="x", padx=15, pady=(10, 5))
+        op_header = ctk.CTkFrame(operations_section_frame, fg_color="transparent")
+        op_header.pack(fill="x", padx=15, pady=(10,5))
+        ctk.CTkLabel(op_header, text=self._t("ctklabel_text_file_operations"), font=("Segoe UI", 18, "bold")).pack(side="left")
 
-        ctk.CTkLabel(op_header_frame, text=get_translation("ctklabel_text_empty_string"), font=("Segoe UI", 20)).pack(side="left", padx=(0, 10))
-        ctk.CTkLabel(op_header_frame, text=get_translation("ctklabel_text_file_operations"),
-                    font=("Segoe UI", 18, "bold")).pack(side="left")
+        ctk.CTkLabel(operations_section_frame, text=self._t("ctklabel_text_manage_your_archived_files_with_these_tools"),
+                    font=("Segoe UI", 12), text_color="gray").pack(anchor="w", padx=15, pady=(0, 15))
 
-        # Operations description
-        ctk.CTkLabel(operations_frame, text=get_translation("ctklabel_text_manage_your_archived_files_with_these_tools"),
-                    font=("Segoe UI", 12)).pack(anchor="w", padx=15, pady=(0, 10))
+        # Grid for operation buttons
+        op_buttons_grid = ctk.CTkFrame(operations_section_frame, fg_color="transparent")
+        op_buttons_grid.pack(fill="x", padx=15, pady=(0, 15))
+        op_buttons_grid.grid_columnconfigure((0,1), weight=1, uniform="manage_op_btn") # Equal width for buttons
 
-        # Operations grid with icons and descriptions
-        buttons_frame = ctk.CTkFrame(operations_frame, fg_color="transparent")
-        buttons_frame.pack(fill="x", padx=15, pady=(5, 15))
-
-        # Define a consistent style for operation buttons
-        button_width = 170
-        button_height = 80
-        button_font = ("Segoe UI", 14, "bold")
-
-        # Create a 2x2 grid of operation buttons
-        buttons_frame.grid_columnconfigure((0, 1), weight=1, uniform="equal")
-
-        # Preview button with icon and description
-        preview_frame = ctk.CTkFrame(buttons_frame, fg_color="transparent")
-        preview_frame.grid(row=0, column=0, padx=5, pady=5, sticky="nsew")
-
-        self.preview_btn = ctk.CTkButton(preview_frame, text=get_translation("ctkbutton_text_preview_file"),
+        # Preview Button
+        preview_btn_frame = ctk.CTkFrame(op_buttons_grid, fg_color="transparent") # Frame for button + desc
+        preview_btn_frame.grid(row=0, column=0, padx=(0,10), pady=5, sticky="nsew")
+        self.preview_btn = ctk.CTkButton(preview_btn_frame, text="🖼️ " + self._t("ctkbutton_text_preview_file"), # Added icon
                                         command=self.custom_preview_interface,
-                                        font=button_font,
-                                        width=button_width, height=button_height,
-                                        fg_color=["#3a7ebf", "#1f538d"])
-        self.preview_btn.pack(pady=5)
+                                        font=("Segoe UI", 14, "bold"), height=45)
+        self.preview_btn.pack(fill="x", pady=(0,5))
+        ctk.CTkLabel(preview_btn_frame, text=self._t("ctklabel_text_view_image_files_or_open_documents"), # Updated desc
+                    font=("Segoe UI", 11), text_color="gray").pack()
 
-        ctk.CTkLabel(preview_frame, text=get_translation("ctklabel_text_view_image_files"),
-                    font=("Segoe UI", 12)).pack()
-
-
-        # Rollback button
-        rollback_frame = ctk.CTkFrame(buttons_frame, fg_color="transparent")
-        rollback_frame.grid(row=0, column=1, padx=5, pady=5, sticky="nsew")
-
-        self.rollback_btn = ctk.CTkButton(rollback_frame, text=get_translation("ctkbutton_text_rollback_file"),
+        # Rollback Button
+        rollback_btn_frame = ctk.CTkFrame(op_buttons_grid, fg_color="transparent")
+        rollback_btn_frame.grid(row=0, column=1, padx=(10,0), pady=5, sticky="nsew")
+        self.rollback_btn = ctk.CTkButton(rollback_btn_frame, text="⏪ " + self._t("ctkbutton_text_rollback_file"), # Added icon
                                         command=self.custom_rollback_interface,
-                                        font=button_font,
-                                        width=button_width, height=button_height,
-                                        fg_color=["#3a7ebf", "#1f538d"])
-        self.rollback_btn.pack(pady=5)
+                                        font=("Segoe UI", 14, "bold"), height=45)
+        self.rollback_btn.pack(fill="x", pady=(0,5))
+        ctk.CTkLabel(rollback_btn_frame, text=self._t("ctklabel_text_restore_previous_versions"),
+                    font=("Segoe UI", 11), text_color="gray").pack()
 
-        ctk.CTkLabel(rollback_frame, text=get_translation("ctklabel_text_restore_previous_versions"),
-                    font=("Segoe UI", 12)).pack()
 
-        # Only show activity logs to admin users
+        # --- Section 2: Activity Log (Admin Only) ---
         if self.current_user and self.current_user["role"] == "admin":
-            # File History and Activity Frame
-            history_frame = ctk.CTkFrame(manage_scroll, corner_radius=8)
-            history_frame.pack(fill="both", expand=True, padx=10, pady=15)
+            activity_section_frame = ctk.CTkFrame(manage_scroll, corner_radius=10)
+            activity_section_frame.pack(fill="both", expand=True, padx=5, pady=10, anchor="n")
 
-            # Header with icon
-            hist_header_frame = ctk.CTkFrame(history_frame, fg_color="transparent")
-            hist_header_frame.pack(fill="x", padx=15, pady=(10, 5))
-
-            ctk.CTkLabel(hist_header_frame, text=get_translation("ctklabel_text_empty_string"), font=("Segoe UI", 20)).pack(side="left", padx=(0, 10))
-            ctk.CTkLabel(hist_header_frame, text=get_translation("ctklabel_text_recent_activity"),
+            activity_header = ctk.CTkFrame(activity_section_frame, fg_color="transparent")
+            activity_header.pack(fill="x", padx=15, pady=(10,5))
+            ctk.CTkLabel(activity_header, text="📜 " + self._t("ctklabel_text_recent_activity"), # Added icon
                         font=("Segoe UI", 18, "bold")).pack(side="left")
 
-            # Refresh button for activity log
-            refresh_btn = ctk.CTkButton(hist_header_frame, text=get_translation("ctkbutton_text_refresh"),
+            refresh_btn = ctk.CTkButton(activity_header, text="🔄 " + self._t("ctkbutton_text_refresh"), # Added icon
                                         command=self.update_activity_log,
-                                        width=100, font=("Segoe UI", 12))
-            refresh_btn.pack(side="right", padx=10)
+                                        width=100, font=("Segoe UI", 12), height=30)
+            refresh_btn.pack(side="right", padx=5)
 
-            # Activity log with scrollbar and modern styling
-            self.activity_box = ctk.CTkTextbox(history_frame, width=400, height=200,
-                                            font=("Consolas", 12))
-            self.activity_box.pack(fill="both", expand=True, padx=15, pady=10)
+            self.activity_box = ctk.CTkTextbox(activity_section_frame, width=400, height=200,
+                                            font=("Consolas", 12), border_spacing=5)
+            self.activity_box.pack(fill="both", expand=True, padx=15, pady=(5,15))
             self.activity_box.configure(state="disabled")
-
-            # Add sample content or load from logs
             self.update_activity_log()
         else:
-            # Add a spacer or footer for non-admin users
-            footer_frame = ctk.CTkFrame(manage_scroll, corner_radius=8)
-            footer_frame.pack(fill="x", padx=10, pady=15)
+            # Placeholder for non-admins if the Manage tab feels too empty
+            non_admin_info_frame = ctk.CTkFrame(manage_scroll, fg_color="transparent")
+            non_admin_info_frame.pack(fill="x", padx=5, pady=20, anchor="n")
+            ctk.CTkLabel(non_admin_info_frame, text=self._t("ctklabel_text_file_management_tools_are_available_above"),
+                        font=("Segoe UI", 14), text_color="gray").pack(pady=20)
 
-            ctk.CTkLabel(footer_frame, text=get_translation("ctklabel_text_file_management_tools_are_available_above"),
-                        font=("Segoe UI", 14)).pack(pady=20)
-
-    # This method needs to be OUTSIDE of setup_manage_tab (fix the indentation)
     def update_activity_log(self):
         """Update the activity log with recent actions"""
         if not hasattr(self, 'activity_box'):
@@ -2703,152 +2724,143 @@ class FileArchiveApp:
         upload_scroll = ctk.CTkScrollableFrame(self.tab_upload)
         upload_scroll.pack(fill="both", expand=True, padx=10, pady=10)
         upload_scroll.grid_columnconfigure(0, weight=1)
-        
-        # --- Company Selection Frame ---
-        company_frame = ctk.CTkFrame(upload_scroll, corner_radius=8)
-        company_frame.pack(fill="x", padx=10, pady=(10, 15), anchor="n")
-        
-        header_frame = ctk.CTkFrame(company_frame, fg_color="transparent")
-        header_frame.pack(fill="x", padx=15, pady=(10, 5))
-        ctk.CTkLabel(header_frame, text=get_translation("ctklabel_text_empty_string"), font=("Segoe UI", 20)).pack(side="left", padx=(0, 10))
-        ctk.CTkLabel(header_frame, text=get_translation("ctklabel_text_company_information"), font=("Segoe UI", 18, "bold")).pack(side="left")
-        
-        company_entry_frame = ctk.CTkFrame(company_frame, fg_color="transparent")
-        company_entry_frame.pack(fill="x", padx=15, pady=(5, 15))
-        ctk.CTkLabel(company_entry_frame, text=get_translation("ctklabel_text_company_name"), font=("Segoe UI", 14)).pack(side="left", padx=(0, 10))
-        self.company_entry = ctk.CTkEntry(company_entry_frame, placeholder_text=get_translation("ctkentry_placeholder_text_enter_company_name"),
-                                        font=("Segoe UI", 14))
+
+        # --- Section 1: Company Information ---
+        company_section_frame = ctk.CTkFrame(upload_scroll, corner_radius=10)
+        company_section_frame.pack(fill="x", padx=5, pady=(5, 10), anchor="n")
+
+        company_header = ctk.CTkFrame(company_section_frame, fg_color="transparent")
+        company_header.pack(fill="x", padx=15, pady=(10, 5))
+        # Consider adding an icon here later if desired
+        ctk.CTkLabel(company_header, text=self._t("ctklabel_text_company_information"), font=("Segoe UI", 18, "bold")).pack(side="left")
+
+        company_input_frame = ctk.CTkFrame(company_section_frame, fg_color="transparent")
+        company_input_frame.pack(fill="x", padx=15, pady=(5, 15))
+        ctk.CTkLabel(company_input_frame, text=self._t("ctklabel_text_company_name") + ":", font=("Segoe UI", 14)).pack(side="left", padx=(0, 10))
+        self.company_entry = ctk.CTkEntry(company_input_frame, placeholder_text=self._t("ctkentry_placeholder_text_enter_company_name"), font=("Segoe UI", 14), height=35)
         self.company_entry.pack(side="left", fill="x", expand=True)
         self.company_entry.bind("<FocusOut>", self.update_options)
         self.company_entry.bind("<Return>", self.update_options)
-        # --- Structure Selection Frame ---
-        structure_frame = ctk.CTkFrame(upload_scroll, corner_radius=8)
-        structure_frame.pack(fill="x", padx=10, pady=15, anchor="n")
+
+        # --- Section 2: Document Structure ---
+        structure_section_frame = ctk.CTkFrame(upload_scroll, corner_radius=10)
+        structure_section_frame.pack(fill="x", padx=5, pady=10, anchor="n")
+
+        structure_header = ctk.CTkFrame(structure_section_frame, fg_color="transparent")
+        structure_header.pack(fill="x", padx=15, pady=(10,5))
+        ctk.CTkLabel(structure_header, text=self._t("ctklabel_text_document_structure"), font=("Segoe UI", 18, "bold")).pack(side="left")
         
-        struct_header_frame = ctk.CTkFrame(structure_frame, fg_color="transparent")
-        struct_header_frame.pack(fill="x", padx=15, pady=(10, 5))
-        ctk.CTkLabel(struct_header_frame, text=get_translation("ctklabel_text_empty_string"), font=("Segoe UI", 20)).pack(side="left", padx=(0, 10))
-        ctk.CTkLabel(struct_header_frame, text=get_translation("ctklabel_text_document_structure"), font=("Segoe UI", 18, "bold")).pack(side="left")
-        ctk.CTkLabel(structure_frame, text=get_translation("ctklabel_text_select_the_appropriate_structure_for_filing"),
-                    font=("Segoe UI", 12)).pack(anchor="w", padx=15, pady=(0, 10))
-        
-        selection_frame = ctk.CTkFrame(structure_frame, fg_color="transparent")
-        selection_frame.pack(fill="x", padx=15, pady=(5, 15))
-        selection_frame.grid_columnconfigure(1, weight=1)
-        
+        ctk.CTkLabel(structure_section_frame, text=self._t("ctklabel_text_select_the_appropriate_structure_for_filing"),
+                    font=("Segoe UI", 12), text_color="gray").pack(anchor="w", padx=15, pady=(0, 10))
+
+        # Grid for dropdowns for better alignment
+        dropdown_grid_frame = ctk.CTkFrame(structure_section_frame, fg_color="transparent")
+        dropdown_grid_frame.pack(fill="x", padx=15, pady=(0, 10))
+        dropdown_grid_frame.grid_columnconfigure(1, weight=1) # Make option menus expand
+
         # Header selection
-        ctk.CTkLabel(selection_frame, text=get_translation("ctklabel_text_header"), font=("Segoe UI", 14)).grid(row=0, column=0, sticky="w",
-                                                                                padx=(0, 10), pady=10)
+        ctk.CTkLabel(dropdown_grid_frame, text=self._t("ctklabel_text_header"), font=("Segoe UI", 14)).grid(row=0, column=0, sticky="w", padx=(0, 10), pady=(5,7))
         self.header_var = ctk.StringVar(value=list(self.structure.keys())[0])
-        self.header_menu = ctk.CTkOptionMenu(selection_frame,
+        self.header_menu = ctk.CTkOptionMenu(dropdown_grid_frame,
                                             values=list(self.structure.keys()),
                                             variable=self.header_var,
-                                            font=("Segoe UI", 13))
-        self.header_menu.grid(row=0, column=1, sticky="ew", pady=10)
+                                            font=("Segoe UI", 13), height=35)
+        self.header_menu.grid(row=0, column=1, sticky="ew", pady=(5,7))
         self.header_var.trace_add("write", self.update_options)
         
         # Subheader selection
-        ctk.CTkLabel(selection_frame, text=get_translation("ctklabel_text_subheader"), font=("Segoe UI", 14)).grid(row=1, column=0, sticky="w",
-                                                                                    padx=(0, 10), pady=10)
+        ctk.CTkLabel(dropdown_grid_frame, text=self._t("ctklabel_text_subheader"), font=("Segoe UI", 14)).grid(row=1, column=0, sticky="w", padx=(0, 10), pady=(5,7))
         self.subheader_var = ctk.StringVar()
-        self.subheader_menu = ctk.CTkOptionMenu(selection_frame,
-                                                values=[],  # Initialize empty
+        self.subheader_menu = ctk.CTkOptionMenu(dropdown_grid_frame,
+                                                values=[],
                                                 variable=self.subheader_var,
-                                                font=("Segoe UI", 13))
-        self.subheader_menu.grid(row=1, column=1, sticky="ew", pady=10)
+                                                font=("Segoe UI", 13), height=35)
+        self.subheader_menu.grid(row=1, column=1, sticky="ew", pady=(5,7))
         self.subheader_var.trace_add("write", self.update_section_options_upload)
         
         # Section selection
-        ctk.CTkLabel(selection_frame, text=get_translation("ctklabel_text_section"), font=("Segoe UI", 14)).grid(row=2, column=0, sticky="w",
-                                                                                padx=(0, 10), pady=10)
+        ctk.CTkLabel(dropdown_grid_frame, text=self._t("ctklabel_text_section"), font=("Segoe UI", 14)).grid(row=2, column=0, sticky="w", padx=(0, 10), pady=(5,7))
         self.section_var = ctk.StringVar()
-        self.section_menu = ctk.CTkOptionMenu(selection_frame,
-                                            values=[],  # Initialize empty
+        self.section_menu = ctk.CTkOptionMenu(dropdown_grid_frame,
+                                            values=[],
                                             variable=self.section_var,
-                                            font=("Segoe UI", 13))
-        self.section_menu.grid(row=2, column=1, sticky="ew", pady=10)
-        # Trace for section change to update subsections
+                                            font=("Segoe UI", 13), height=35)
+        self.section_menu.grid(row=2, column=1, sticky="ew", pady=(5,7))
         self.section_var.trace_add("write", self.update_subsection_options_upload)
         
-        # --- Subsection Selection (NEW) ---
-        ctk.CTkLabel(selection_frame, text=get_translation("ctklabel_text_subsection"), font=("Segoe UI", 14)).grid(row=3, column=0, sticky="w",
-                                                                                    padx=(0, 10), pady=10)
+        # Subsection Selection
+        ctk.CTkLabel(dropdown_grid_frame, text=self._t("ctklabel_text_subsection"), font=("Segoe UI", 14)).grid(row=3, column=0, sticky="w", padx=(0, 10), pady=(5,7))
         self.subsection_var = ctk.StringVar()
-        self.subsection_menu = ctk.CTkOptionMenu(selection_frame,
-                                                values=[],  # Initialize empty
+        self.subsection_menu = ctk.CTkOptionMenu(dropdown_grid_frame,
+                                                values=[],
                                                 variable=self.subsection_var,
-                                                font=("Segoe UI", 13))
-        self.subsection_menu.grid(row=3, column=1, sticky="ew", pady=10)
+                                                font=("Segoe UI", 13), height=35)
+        self.subsection_menu.grid(row=3, column=1, sticky="ew", pady=(5,7))
         
-        # Initialize subheader, section, and subsection options based on initial header selection
-        self.update_options()
-         # --- << NEW: Add Structure Element Button (Admin Only) >> ---
+        self.update_options() # Initial population
+
         if self.current_user and self.current_user["role"] == "admin":
             self.add_folder_button = ctk.CTkButton(
-                structure_frame, # Add button to the main structure_frame
-                text="➕ Add New Folder Here...",
-                font=("Segoe UI", 12), # Slightly smaller font
-                height=30,            # Smaller height
-                fg_color=("gray70", "gray30"), # Subtle color, adjust as needed
-                command=self.add_structure_element_dialog_contextual # Call the NEW dialog function
+                structure_section_frame, # Add to the structure_section_frame
+                text="➕ " + self._t("button_text_add_new_folder_here"), # Use translation
+                font=("Segoe UI", 12), height=30,
+                fg_color=("gray70", "gray30"),
+                command=self.add_structure_element_dialog_contextual
             )
-            # Pack it *after* the selection_frame, within structure_frame
-            self.add_folder_button.pack(pady=(10, 15), padx=15, anchor="e") # Add padding, align right
-        # --- Upload Options Frame ---
-        upload_opts_frame = ctk.CTkFrame(upload_scroll, corner_radius=8)
-        upload_opts_frame.pack(fill="x", padx=10, pady=15, anchor="n")
-        
-        upload_header_frame = ctk.CTkFrame(upload_opts_frame, fg_color="transparent")
-        upload_header_frame.pack(fill="x", padx=15, pady=(10, 5))
-        ctk.CTkLabel(upload_header_frame, text=get_translation("ctklabel_text_empty_string"), font=("Segoe UI", 20)).pack(side="left", padx=(0, 10))
-        ctk.CTkLabel(upload_header_frame, text=get_translation("ctklabel_text_upload_options"), font=("Segoe UI", 18, "bold")).pack(side="left")
+            self.add_folder_button.pack(pady=(10, 15), padx=15, anchor="e")
+
+        # --- Section 3: Upload Actions ---
+        upload_actions_frame = ctk.CTkFrame(upload_scroll, corner_radius=10)
+        upload_actions_frame.pack(fill="x", padx=5, pady=10, anchor="n")
+
+        upload_actions_header = ctk.CTkFrame(upload_actions_frame, fg_color="transparent")
+        upload_actions_header.pack(fill="x", padx=15, pady=(10,5))
+        ctk.CTkLabel(upload_actions_header, text=self._t("ctklabel_text_upload_options"), font=("Segoe UI", 18, "bold")).pack(side="left")
         
         file_types_str = ", ".join([ext.upper().replace('.', '') for ext in SUPPORTED_FILE_EXTENSIONS])
-        ctk.CTkLabel(upload_opts_frame, text=f"Supported: {file_types_str}",
-                    font=("Segoe UI", 12, "italic")).pack(anchor="w", padx=15, pady=(5, 10))
+        ctk.CTkLabel(upload_actions_frame, text=f"{self._t('label_supported_files')}: {file_types_str}",
+                    font=("Segoe UI", 11, "italic"), text_color="gray").pack(anchor="w", padx=15, pady=(0,10))
+
+        action_buttons_frame = ctk.CTkFrame(upload_actions_frame, fg_color="transparent")
+        action_buttons_frame.pack(fill="x", padx=15, pady=(5,15))
+        # Make buttons expand equally if desired, or use specific widths
+        action_buttons_frame.grid_columnconfigure((0,1,2), weight=1, uniform="upload_action")
+
+
+        self.upload_btn = ctk.CTkButton(action_buttons_frame, text=self._t("ctkbutton_text_upload_file"),
+                                        command=self.upload_file, font=("Segoe UI", 14, "bold"), height=40)
+        self.upload_btn.grid(row=0, column=0, padx=(0,5), pady=5, sticky="ew")
         
-        button_frame = ctk.CTkFrame(upload_opts_frame, fg_color="transparent")
-        button_frame.pack(fill="x", padx=15, pady=(5, 15))
+        self.batch_upload_btn = ctk.CTkButton(action_buttons_frame, text=self._t("ctkbutton_text_batch_upload"),
+                                            command=self.batch_upload, font=("Segoe UI", 14), height=40)
+        self.batch_upload_btn.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
         
-        self.upload_btn = ctk.CTkButton(button_frame, text=get_translation("ctkbutton_text_upload_file"),
-                                        command=self.upload_file,
-                                        font=("Segoe UI", 14, "bold"),
-                                        height=38)
-        self.upload_btn.pack(side="left", padx=(0, 10))
+        self.scan_btn = ctk.CTkButton(action_buttons_frame, text=self._t("ctkbutton_text_scan_archive"),
+                                    command=self.scan_and_archive, font=("Segoe UI", 14), height=40)
+        self.scan_btn.grid(row=0, column=2, padx=(5,0), pady=5, sticky="ew")
         
-        self.batch_upload_btn = ctk.CTkButton(button_frame, text=get_translation("ctkbutton_text_batch_upload"),
-                                            command=self.batch_upload,
-                                            font=("Segoe UI", 14),
-                                            height=38)
-        self.batch_upload_btn.pack(side="left", padx=10)
+        # --- Section 4: Drag & Drop Zone ---
+        self.dropzone_frame = ctk.CTkFrame(upload_scroll, corner_radius=10, border_width=2,
+                                        border_color=("gray70", "gray30"), fg_color=("gray90", "gray13")) # Slightly different bg
+        self.dropzone_frame.pack(fill="both", expand=True, padx=5, pady=(10,5), anchor="n")
         
-        self.scan_btn = ctk.CTkButton(button_frame, text=get_translation("ctkbutton_text_scan_archive"),
-                                    command=self.scan_and_archive,
-                                    font=("Segoe UI", 14, "bold"),
-                                    height=38)
-        self.scan_btn.pack(side="left", padx=(10, 0))
-        
-        # --- Drag & Drop Zone ---
-        self.dropzone_frame = ctk.CTkFrame(upload_scroll, corner_radius=8, border_width=2,
-                                        border_color=("gray70", "gray30"))
-        self.dropzone_frame.pack(fill="both", expand=True, padx=10, pady=15, anchor="n")
-        
-        # Store the original color to restore it later
         self.dropzone_original_color = self.dropzone_frame.cget("border_color")
         
-        dropzone_content_frame = ctk.CTkFrame(self.dropzone_frame, fg_color="transparent")
-        dropzone_content_frame.pack(expand=True)
+        # Center content within the dropzone
+        dropzone_content_wrapper = ctk.CTkFrame(self.dropzone_frame, fg_color="transparent")
+        dropzone_content_wrapper.pack(expand=True, anchor="center")
+
+        # Consider an icon for better visual cue
+        # Example: self.upload_icon_label = ctk.CTkLabel(dropzone_content_wrapper, text="📤", font=("Segoe UI Emoji", 48))
+        # self.upload_icon_label.pack(pady=(10,5))
+
+        self.dropzone_label = ctk.CTkLabel(dropzone_content_wrapper, text=self._t("ctklabel_text_drag_drop_files_here"),
+                                        font=("Segoe UI", 20, "bold"))
+        self.dropzone_label.pack(pady=(10, 5)) # Increased padding
         
-        self.dropzone_label = ctk.CTkLabel(dropzone_content_frame, text=get_translation("ctklabel_text_drag_drop_files_here"),
-                                        font=("Segoe UI", 18, "bold"))
-        self.dropzone_label.pack(pady=(5, 5))
-        
-        upload_icon = ctk.CTkLabel(dropzone_content_frame, text=get_translation("ctklabel_text_empty_string"), font=("Segoe UI", 48))
-        upload_icon.pack(pady=10)
-        
-        self.dropzone_sublabel = ctk.CTkLabel(dropzone_content_frame, text=get_translation("ctklabel_text_or_click_to_browse"),
-                                            font=("Segoe UI", 14))
-        self.dropzone_sublabel.pack(pady=(5, 5))
+        self.dropzone_sublabel = ctk.CTkLabel(dropzone_content_wrapper, text=self._t("ctklabel_text_or_click_to_browse"),
+                                            font=("Segoe UI", 14), text_color="gray")
+        self.dropzone_sublabel.pack(pady=(0, 10))
         
         clickable_widgets = [
             self.dropzone_frame, dropzone_content_frame,
@@ -3129,53 +3141,88 @@ class FileArchiveApp:
         # --- Create the Dialog Window ---
         add_struct_win = ctk.CTkToplevel(self.main_app)
         add_struct_win.transient(self.main_app)
-        add_struct_win.title("Add Folder")
-        self.center_window(add_struct_win, 550, 350) # Smaller dialog
-        add_struct_win.grab_set()
+        add_struct_win.title(self._t("dialog_title_add_folder"))
         add_struct_win.attributes("-topmost", True)
+        # Adjusted size for clarity
+        self.center_window(add_struct_win, 500, 400)
+        add_struct_win.grab_set()
 
-        ctk.CTkLabel(add_struct_win, text=get_translation("ctklabel_text_add_new_folder"),
-                     font=("Segoe UI", 18, "bold")).pack(pady=(15, 10))
+        dialog_main_frame = ctk.CTkFrame(add_struct_win, fg_color="transparent")
+        dialog_main_frame.pack(fill="both", expand=True, padx=20, pady=20)
 
-        # (Existing code to display context...)
-        context_frame = ctk.CTkFrame(add_struct_win, fg_color="transparent")
-        context_frame.pack(fill="x", padx=20, pady=5)
-        ctk.CTkLabel(context_frame, text=f"Company: {company_display_name}", font=("Segoe UI", 12)).pack(anchor="w")
-        ctk.CTkLabel(context_frame, text=f"Header: {header}", font=("Segoe UI", 12)).pack(anchor="w")
+        ctk.CTkLabel(dialog_main_frame, text="➕ " + self._t("ctklabel_text_add_new_folder_context"),
+                     font=("Segoe UI", 18, "bold")).pack(pady=(0,10))
+
+        # Context Display Section
+        context_display_frame = ctk.CTkFrame(dialog_main_frame, corner_radius=6, fg_color=("gray88", "gray17"))
+        context_display_frame.pack(fill="x", pady=(5,10))
+        ctk.CTkLabel(context_display_frame, text=self._t("label_current_context") + ":", font=("Segoe UI", 13, "italic"), text_color="gray").pack(anchor="w", padx=10, pady=(5,0))
+
+        context_text = f"{self._t('label_company')}: {company_display_name}\n"
+        context_text += f"{self._t('ctklabel_text_header')}: {header}"
         if subheader:
-            ctk.CTkLabel(context_frame, text=f"Subheader: {subheader}", font=("Segoe UI", 12)).pack(anchor="w")
-        if section:
-            ctk.CTkLabel(context_frame, text=f"Section: {section}", font=("Segoe UI", 12)).pack(anchor="w")
+            context_text += f"\n{self._t('ctklabel_text_subheader')}: {subheader}"
+        if section: # Only show section if subheader is also present and it's a nested structure
+            if subheader and isinstance(self.structure.get(header, {}).get(subheader), dict):
+                 context_text += f"\n{self._t('ctklabel_text_section')}: {section}"
+        ctk.CTkLabel(context_display_frame, text=context_text, font=("Segoe UI", 12), justify="left", anchor="w").pack(padx=10, pady=(2,10), fill="x")
 
-        # (Existing code for type selection...)
-        ctk.CTkLabel(add_struct_win, text=get_translation("ctklabel_text_1_what_are_you_adding"), font=("Segoe UI", 14)).pack(anchor="w", padx=20, pady=(15, 2))
-        add_type_var = ctk.StringVar(value="Subsection")
-        add_type_frame = ctk.CTkFrame(add_struct_win, fg_color="transparent")
-        add_type_frame.pack(pady=(0, 10), padx=20)
-        ctk.CTkRadioButton(add_type_frame, text=get_translation("ctkradiobutton_text_new_section_under_subheader"), variable=add_type_var, value="Section", font=("Segoe UI", 13)).pack(side="left", padx=10)
-        ctk.CTkRadioButton(add_type_frame, text=get_translation("ctkradiobutton_text_new_subsection_under_section"), variable=add_type_var, value="Subsection", font=("Segoe UI", 13)).pack(side="left", padx=10)
 
-        # (Existing code for name entry...)
-        ctk.CTkLabel(add_struct_win, text=get_translation("ctklabel_text_2_enter_name_for_new_folder"), font=("Segoe UI", 14)).pack(anchor="w", padx=20, pady=(10, 2))
-        new_element_entry = ctk.CTkEntry(add_struct_win, placeholder_text=get_translation("ctkentry_placeholder_text_eg_b10b_or_newsection"),
-                                         font=("Segoe UI", 13))
-        new_element_entry.pack(pady=(0, 15), padx=20, fill="x")
+        # Type of Element to Add
+        ctk.CTkLabel(dialog_main_frame, text=self._t("ctklabel_text_1_what_are_you_adding") + ":", font=("Segoe UI", 14)).pack(anchor="w", pady=(10,2))
+        add_type_var = ctk.StringVar(value="Subsection") # Default
+        add_type_radio_frame = ctk.CTkFrame(dialog_main_frame, fg_color="transparent")
+        add_type_radio_frame.pack(fill="x", pady=(0,10))
+
+        # Determine which radio buttons to enable based on context
+        can_add_section = subheader and isinstance(self.structure.get(header, {}).get(subheader), dict)
+        can_add_subsection = can_add_section and section and isinstance(self.structure.get(header, {}).get(subheader, {}).get(section), list)
+
+        # Default to subsection if possible, else section, else disable if context is insufficient
+        if not can_add_subsection and can_add_section:
+            add_type_var.set("Section")
+        elif not can_add_section: # Cannot add either
+             add_type_var.set("") # Or some other indicator
+
+        r_section = ctk.CTkRadioButton(add_type_radio_frame, text=self._t("ctkradiobutton_text_new_section_under_subheader"),
+                                       variable=add_type_var, value="Section", font=("Segoe UI", 13))
+        r_section.pack(side="left", padx=(0,15))
+
+        r_subsection = ctk.CTkRadioButton(add_type_radio_frame, text=self._t("ctkradiobutton_text_new_subsection_under_section"),
+                                          variable=add_type_var, value="Subsection", font=("Segoe UI", 13))
+        r_subsection.pack(side="left")
+
+        if not can_add_section:
+            r_section.configure(state="disabled")
+        if not can_add_subsection: # If cannot add section, then cannot add subsection either
+            r_subsection.configure(state="disabled")
+
+        if not can_add_section and not can_add_subsection:
+             ctk.CTkLabel(dialog_main_frame, text=self._t("error_cannot_add_folder_here"), font=("Segoe UI", 12), text_color="orange").pack(anchor="w", pady=(0,5))
+
+
+        # Name for New Folder
+        ctk.CTkLabel(dialog_main_frame, text=self._t("ctklabel_text_2_enter_name_for_new_folder") + ":", font=("Segoe UI", 14)).pack(anchor="w", pady=(5,2))
+        new_element_entry = ctk.CTkEntry(dialog_main_frame, placeholder_text=self._t("ctkentry_placeholder_text_eg_b10b_or_newsection"),
+                                         font=("Segoe UI", 13), height=35)
+        new_element_entry.pack(fill="x", pady=(0,15))
         new_element_entry.focus_set()
 
-        # --- Action Button (CORRECTED Command Setting) ---
-        # Create the button FIRST
-        add_button = ctk.CTkButton(add_struct_win, text=get_translation("ctkbutton_text_add_folder"),
-                                   # Command will be set below using configure
+        # Action Button
+        add_folder_btn = ctk.CTkButton(dialog_main_frame, text="➕ " + self._t("ctkbutton_text_add_this_folder"),
                                    font=("Segoe UI", 14, "bold"), height=40)
-        add_button.pack(pady=(15, 15), padx=20, fill="x")
+        add_folder_btn.pack(pady=(10,0), fill="x")
 
-        # NOW configure the command using lambda to pass the button itself
-        add_button.configure(command=lambda: self._perform_contextual_folder_add(
-            add_struct_win,      # Argument 1
-            add_type_var,        # Argument 2
-            new_element_entry,   # Argument 3
-            add_button           # Argument 4 <<< THIS WAS MISSING IN THE CALL
+        # Disable button if no valid add_type can be selected
+        if not add_type_var.get() or (not can_add_section and not can_add_subsection):
+            add_folder_btn.configure(state="disabled")
+
+        add_folder_btn.configure(command=lambda: self._perform_contextual_folder_add(
+            add_struct_win, add_type_var, new_element_entry, add_folder_btn
         ))
+
+        add_struct_win.bind("<Return>", lambda event: add_folder_btn.invoke() if add_folder_btn.cget("state") == "normal" else None)
+        add_struct_win.bind("<Escape>", lambda event: add_struct_win.destroy())
     def scan_and_archive(self):
         """Scan a document via WIA, prompt user for filename with prefix enforcement, and archive it."""
         if not WIA_AVAILABLE:
@@ -3990,12 +4037,24 @@ class FileArchiveApp:
             if query:
                 with self.search_queries_lock:
                     self.search_queries.append(query)
-            file_type_filter = self.file_type_var.get()  # "All" or "Images"
+            file_type_selected_display = self.file_type_var.get()
+
+            # Map display name back to an internal key or logic
+            # This assumes IMAGE_EXTENSIONS and DOCUMENT_EXTENSIONS are available globally/as instance vars
+            apply_image_filter = False
+            apply_document_filter = False
+
+            if file_type_selected_display == self._t("filter_images_only"):
+                apply_image_filter = True
+            elif file_type_selected_display == self._t("filter_documents_only"):
+                apply_document_filter = True
+            # If it's self._t("filter_all_files"), no specific filter is applied here for extensions
+
             try:
                 start_date = datetime.datetime.strptime(self.start_date_entry.get().strip(), "%Y-%m-%d") \
                     if self.start_date_entry.get().strip() else None
             except ValueError:
-                self.ui_queue.put(lambda: messagebox.showerror("Error", "Start date format should be YYYY-MM-DD"))
+                self.ui_queue.put(lambda: messagebox.showerror(self._t("error_title"), self._t("error_invalid_start_date_format")))
                 return
             try:
                 end_date = datetime.datetime.strptime(self.end_date_entry.get().strip(), "%Y-%m-%d") \
@@ -4009,10 +4068,17 @@ class FileArchiveApp:
                 for name in dirs + files:
                     if query in name.lower():
                         full_path = os.path.join(root, name)
-                        if file_type_filter != "All" and os.path.isfile(full_path):
+
+                        # Apply file type filter
+                        if os.path.isfile(full_path):
                             ext = os.path.splitext(name)[1].lower()
-                            if file_type_filter == "Images" and ext not in SUPPORTED_FILE_EXTENSIONS:
+                            if apply_image_filter and ext not in IMAGE_EXTENSIONS: # Use constant
                                 continue
+                            if apply_document_filter and ext not in DOCUMENT_EXTENSIONS: # Use constant
+                                continue
+                        elif apply_image_filter or apply_document_filter: # If it's a directory and a filter is active
+                            continue # Directories don't match specific file type filters
+
                         try:
                             mod_time = datetime.datetime.fromtimestamp(os.stat(full_path).st_mtime)
                         except Exception:
@@ -4030,30 +4096,66 @@ class FileArchiveApp:
 
         def open_search_window():
             search_win = ctk.CTkToplevel(self.main_app)
-            search_win.transient(self.main_app) # Stay on top
-            search_win.title("Search Archive")
-            self.center_window(search_win, 700, 600)
+            search_win.transient(self.main_app)
+            search_win.title(self._t("dialog_title_search_archive"))
+            search_win.attributes("-topmost", True)
+            # Adjusted size for better layout
+            self.center_window(search_win, 550, 600)
             search_win.grab_set()
 
-            ctk.CTkLabel(search_win, text=get_translation("ctklabel_text_search_archive"), font=("Segoe UI", 18, "bold")).pack(pady=10)
-            search_frame = ctk.CTkFrame(search_win)
-            search_frame.pack(pady=5, padx=5, fill="x")
-            ctk.CTkLabel(search_frame, text=get_translation("ctklabel_text_search_query"), font=("Segoe UI", 14)).grid(row=0, column=0, padx=5, pady=5, sticky="w")
-            self.search_entry = ctk.CTkEntry(search_frame, placeholder_text=get_translation("ctkentry_placeholder_text_enter_search_term"), width=200, font=("Segoe UI", 14))
-            self.search_entry.grid(row=0, column=1, padx=5, pady=5)
-            ctk.CTkLabel(search_frame, text=get_translation("ctklabel_text_file_type"), font=("Segoe UI", 14)).grid(row=1, column=0, padx=5, pady=5, sticky="w")
-            self.file_type_var = ctk.StringVar(value="All")
-            file_type_menu = ctk.CTkOptionMenu(search_frame, variable=self.file_type_var, values=["All", "Images"], font=("Segoe UI", 14))
-            file_type_menu.grid(row=1, column=1, padx=5, pady=5)
-            ctk.CTkLabel(search_frame, text=get_translation("ctklabel_text_start_date_yyyymmdd"), font=("Segoe UI", 14)).grid(row=2, column=0, padx=5, pady=5, sticky="w")
-            self.start_date_entry = ctk.CTkEntry(search_frame, placeholder_text=get_translation("ctkentry_placeholder_text_yyyymmdd"), width=200, font=("Segoe UI", 14))
-            self.start_date_entry.grid(row=2, column=1, padx=5, pady=5)
-            ctk.CTkLabel(search_frame, text=get_translation("ctklabel_text_end_date_yyyymmdd"), font=("Segoe UI", 14)).grid(row=3, column=0, padx=5, pady=5, sticky="w")
-            self.end_date_entry = ctk.CTkEntry(search_frame, placeholder_text=get_translation("ctkentry_placeholder_text_yyyymmdd"), width=200, font=("Segoe UI", 14))
-            self.end_date_entry.grid(row=3, column=1, padx=5, pady=5)
-            ctk.CTkButton(search_frame, text=get_translation("ctkbutton_text_search"), command=perform_search, font=("Segoe UI", 14)).grid(row=4, column=0, columnspan=2, pady=10)
-            self.results_frame = ctk.CTkScrollableFrame(search_win, width=680, height=350)
-            self.results_frame.pack(pady=10, padx=10)
+            dialog_main_frame = ctk.CTkFrame(search_win, fg_color="transparent")
+            dialog_main_frame.pack(fill="both", expand=True, padx=15, pady=15)
+
+            ctk.CTkLabel(dialog_main_frame, text="🔍 " + self._t("ctklabel_text_search_archive_criteria"),
+                         font=("Segoe UI", 18, "bold")).pack(pady=(0,15))
+
+            # Frame for search criteria inputs using grid
+            criteria_frame = ctk.CTkFrame(dialog_main_frame, corner_radius=8)
+            criteria_frame.pack(fill="x", pady=5, padx=5)
+            criteria_frame.grid_columnconfigure(1, weight=1) # Make entry fields expand
+
+            row_idx = 0
+            # Search Query
+            ctk.CTkLabel(criteria_frame, text=self._t("ctklabel_text_search_query") + ":", font=("Segoe UI", 14)).grid(row=row_idx, column=0, padx=10, pady=8, sticky="w")
+            self.search_entry = ctk.CTkEntry(criteria_frame, placeholder_text=self._t("ctkentry_placeholder_text_enter_search_term"), font=("Segoe UI", 14), height=35)
+            self.search_entry.grid(row=row_idx, column=1, padx=10, pady=8, sticky="ew")
+            row_idx += 1
+
+            # File Type Filter
+            ctk.CTkLabel(criteria_frame, text=self._t("ctklabel_text_file_type") + ":", font=("Segoe UI", 14)).grid(row=row_idx, column=0, padx=10, pady=8, sticky="w")
+            self.file_type_var = ctk.StringVar(value=self._t("filter_all_files")) # Default to "All"
+            # Ensure values used here match logic in perform_search
+            file_type_values = [self._t("filter_all_files"), self._t("filter_images_only"), self._t("filter_documents_only")]
+            file_type_menu = ctk.CTkOptionMenu(criteria_frame, variable=self.file_type_var, values=file_type_values, font=("Segoe UI", 13), height=35, dynamic_width=True)
+            file_type_menu.grid(row=row_idx, column=1, padx=10, pady=8, sticky="ew")
+            row_idx += 1
+
+            # Start Date
+            ctk.CTkLabel(criteria_frame, text=self._t("ctklabel_text_start_date_yyyymmdd") + ":", font=("Segoe UI", 14)).grid(row=row_idx, column=0, padx=10, pady=8, sticky="w")
+            self.start_date_entry = ctk.CTkEntry(criteria_frame, placeholder_text=self._t("ctkentry_placeholder_text_yyyymmdd_optional"), font=("Segoe UI", 14), height=35)
+            self.start_date_entry.grid(row=row_idx, column=1, padx=10, pady=8, sticky="ew")
+            row_idx += 1
+
+            # End Date
+            ctk.CTkLabel(criteria_frame, text=self._t("ctklabel_text_end_date_yyyymmdd") + ":", font=("Segoe UI", 14)).grid(row=row_idx, column=0, padx=10, pady=8, sticky="w")
+            self.end_date_entry = ctk.CTkEntry(criteria_frame, placeholder_text=self._t("ctkentry_placeholder_text_yyyymmdd_optional"), font=("Segoe UI", 14), height=35)
+            self.end_date_entry.grid(row=row_idx, column=1, padx=10, pady=8, sticky="ew")
+            row_idx += 1
+
+            # Search Button (within criteria_frame for better grouping)
+            search_action_btn = ctk.CTkButton(criteria_frame, text="🔎 " + self._t("ctkbutton_text_perform_search"),
+                                              command=perform_search, font=("Segoe UI", 14, "bold"), height=40)
+            search_action_btn.grid(row=row_idx, column=0, columnspan=2, padx=10, pady=(15,10), sticky="ew")
+
+            # Results Area
+            ctk.CTkLabel(dialog_main_frame, text=self._t("ctklabel_text_search_results") + ":", font=("Segoe UI", 16, "bold")).pack(anchor="w", padx=5, pady=(15,5))
+            self.results_frame = ctk.CTkScrollableFrame(dialog_main_frame, height=200, border_width=1, border_color=("gray70","gray25"))
+            self.results_frame.pack(fill="both", expand=True, pady=(0,5), padx=5)
+
+            self.search_entry.focus_set()
+            search_win.bind("<Return>", lambda event: perform_search())
+            search_win.bind("<Escape>", lambda event: search_win.destroy())
+
         open_search_window()
 
     # --------------------------------------------------------------------------
@@ -4062,33 +4164,26 @@ class FileArchiveApp:
     def open_path(self, path):
         try:
             if platform.system() == "Windows":
-                os.startfile(path)
+                os.startfile(os.path.normpath(path)) # Normalize path for Windows
             elif platform.system() == "Darwin":
                 subprocess.call(["open", path])
             else:
                 subprocess.call(["xdg-open", path])
         except Exception as e:
-            messagebox.showerror("Error", f"Could not open {path}: {e}")
+            messagebox.showerror(self._t("error_title_file_open"), f"{self._t('error_could_not_open_path').format(path=path)}\n{e}")
+            logging.error(f"Error opening path {path}: {e}", exc_info=True)
+
     def logout(self):
         """Log out the current user and return to login screen"""
         if not self.current_user:
             return
 
-        # Hide the archive folder
         self.hide_archive_folder()
-        logging.info("Archive folder hidden on logout")
-
-        # Log the logout
-        logging.info(f"User '{self.current_user['username']}' logged out")
-
-        # Clear current user
+        logging.info(f"User '{self.current_user['username']}' logged out (archive folder hidden).")
         self.current_user = None
-
-        # Hide the main window
         self.main_app.withdraw()
-
-        # Show the login dialog
         self.authenticate_user()
+
 
     # --------------------------------------------------------------------------
     # Company Structure & File Upload
@@ -4291,33 +4386,100 @@ class FileArchiveApp:
     # Dashboard and Search Functionality
     # --------------------------------------------------------------------------
     def open_dashboard(self):
-        dashboard = ctk.CTkToplevel(self.main_app)
-        dashboard.transient(self.main_app) # Stay on top
-        dashboard.title("Dashboard")
-        self.center_window(dashboard, 500, 400)
-        dashboard.grab_set()
+        dashboard_win = ctk.CTkToplevel(self.main_app)
+        dashboard_win.transient(self.main_app)
+        dashboard_win.title(self._t("dialog_title_admin_dashboard"))
+        dashboard_win.attributes("-topmost", True)
+        # Adjusted size for better content presentation
+        self.center_window(dashboard_win, 550, 450)
+        dashboard_win.grab_set()
 
-        total_files, total_size, file_types = 0, 0, {}
-        for root, _, files in os.walk(self.archives_path):
-            for f in files:
-                total_files += 1
-                fpath = os.path.join(root, f)
-                try:
-                    size = os.path.getsize(fpath)
-                    total_size += size
-                except Exception:
-                    continue
-                ext = os.path.splitext(f)[1].lower()
-                file_types[ext] = file_types.get(ext, 0) + 1
-        stats_text = f"Total Files: {total_files}\nTotal Size: {total_size} bytes\nFile Types:\n"
-        for ext, count in file_types.items():
-            stats_text += f"  {ext or 'no ext'}: {count}\n"
-        ctk.CTkLabel(dashboard, text=get_translation("ctklabel_text_archive_statistics"), font=("Segoe UI", 16, "bold")).pack(pady=5)
-        ctk.CTkLabel(dashboard, text=stats_text, font=("Segoe UI", 12)).pack(pady=5)
-        ctk.CTkLabel(dashboard, text=get_translation("ctklabel_text_search_analytics"), font=("Segoe UI", 16, "bold")).pack(pady=5)
+        dialog_main_frame = ctk.CTkFrame(dashboard_win, fg_color="transparent")
+        dialog_main_frame.pack(fill="both", expand=True, padx=15, pady=15)
+
+        ctk.CTkLabel(dialog_main_frame, text="📊 " + self._t("ctklabel_text_admin_dashboard_title"),
+                     font=("Segoe UI", 20, "bold")).pack(pady=(0,15))
+
+        # Scrollable frame for content if it grows
+        scroll_content = ctk.CTkScrollableFrame(dialog_main_frame, fg_color="transparent", corner_radius=0)
+        scroll_content.pack(fill="both", expand=True)
+
+
+        # Archive Statistics Section
+        ctk.CTkLabel(scroll_content, text=self._t("ctklabel_text_archive_statistics"),
+                     font=("Segoe UI", 16, "bold")).pack(anchor="w", pady=(5,2), padx=5)
+
+        archive_stats_frame = ctk.CTkFrame(scroll_content, corner_radius=8)
+        archive_stats_frame.pack(fill="x", pady=(0,10), padx=5)
+
+        total_files, total_size_bytes, file_types_counts = 0, 0, {}
+        try:
+            for root, _, files in os.walk(self.archives_path):
+                for f_name in files:
+                    total_files += 1
+                    f_path = os.path.join(root, f_name)
+                    try:
+                        size = os.path.getsize(f_path)
+                        total_size_bytes += size
+                    except OSError: # File might be gone or inaccessible
+                        continue
+                    ext = os.path.splitext(f_name)[1].lower()
+                    file_types_counts[ext] = file_types_counts.get(ext, 0) + 1
+        except Exception as e:
+            logging.error(f"Error calculating archive stats for dashboard: {e}", exc_info=True)
+            ctk.CTkLabel(archive_stats_frame, text=self._t("error_calculating_stats"), font=("Segoe UI", 12), text_color="red").pack(padx=10, pady=10)
+
+        # Format total size (KB, MB, GB)
+        if total_size_bytes < 1024:
+            formatted_size = f"{total_size_bytes} Bytes"
+        elif total_size_bytes < 1024**2:
+            formatted_size = f"{total_size_bytes/1024:.2f} KB"
+        elif total_size_bytes < 1024**3:
+            formatted_size = f"{total_size_bytes/1024**2:.2f} MB"
+        else:
+            formatted_size = f"{total_size_bytes/1024**3:.2f} GB"
+
+        stats_text_content = f"{self._t('label_total_files')}: {total_files}\n"
+        stats_text_content += f"{self._t('label_total_size')}: {formatted_size}\n\n"
+        stats_text_content += f"{self._t('label_file_types_summary')}:\n"
+
+        if file_types_counts:
+            # Sort file types by count, descending
+            sorted_file_types = sorted(file_types_counts.items(), key=lambda item: item[1], reverse=True)
+            for ext, count in sorted_file_types[:7]: # Show top 7 extensions
+                stats_text_content += f"  - {ext if ext else self._t('label_no_extension')}: {count}\n"
+            if len(sorted_file_types) > 7:
+                stats_text_content += f"  - {self._t('label_and_others')}...\n"
+        else:
+            stats_text_content += f"  {self._t('label_no_files_found')}\n"
+
+        ctk.CTkLabel(archive_stats_frame, text=stats_text_content, font=("Segoe UI", 13), justify="left", anchor="nw").pack(padx=15, pady=10, fill="x")
+
+        # Search Analytics Section
+        ctk.CTkLabel(scroll_content, text=self._t("ctklabel_text_search_analytics"),
+                     font=("Segoe UI", 16, "bold")).pack(anchor="w", pady=(10,2), padx=5)
+
+        search_analytics_frame = ctk.CTkFrame(scroll_content, corner_radius=8)
+        search_analytics_frame.pack(fill="x", pady=(0,10), padx=5)
+
         with self.search_queries_lock:
-            analytics_text = "\n".join(self.search_queries) if self.search_queries else "No searches performed yet."
-        ctk.CTkLabel(dashboard, text=analytics_text, font=("Segoe UI", 12)).pack(pady=5)
+            if self.search_queries:
+                # Display last 5-10 search queries for brevity
+                recent_queries = self.search_queries[-10:] # Get last 10, or fewer if less than 10
+                analytics_text_content = f"{self._t('label_recent_search_queries')} ({len(recent_queries)}):\n"
+                for i, query in enumerate(reversed(recent_queries)): # Show newest first
+                    analytics_text_content += f"  {i+1}. \"{query}\"\n"
+            else:
+                analytics_text_content = self._t("label_no_searches_performed")
+
+        ctk.CTkLabel(search_analytics_frame, text=analytics_text_content, font=("Segoe UI", 13), justify="left", anchor="nw", wraplength=480).pack(padx=15, pady=10, fill="x")
+
+        # Close button
+        close_btn = ctk.CTkButton(dialog_main_frame, text=self._t("ctkbutton_text_close"),
+                                  command=dashboard_win.destroy, font=("Segoe UI", 14), height=35)
+        close_btn.pack(pady=(15,0), side="bottom", anchor="e", padx=5)
+
+        dashboard_win.bind("<Escape>", lambda event: dashboard_win.destroy())
 
 
 
